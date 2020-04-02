@@ -28,9 +28,9 @@
             this.lblOldFile = new System.Windows.Forms.Label();
             this.lblNewFile = new System.Windows.Forms.Label();
             this.btnCompare = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.btnOutput = new System.Windows.Forms.Button();
+            this.dgvOutPut = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
             // btnLoadOld
@@ -81,30 +81,34 @@
             this.btnCompare.UseVisualStyleBackColor = true;
             this.btnCompare.Click += new System.EventHandler(this.btnCompare_Click);
             // 
-            // button1
+            // btnOutput
             // 
-            this.button1.Location = new System.Drawing.Point(219, 114);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(164, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Output File";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnOutput.Location = new System.Drawing.Point(219, 114);
+            this.btnOutput.Name = "btnOutput";
+            this.btnOutput.Size = new System.Drawing.Size(164, 23);
+            this.btnOutput.TabIndex = 5;
+            this.btnOutput.Text = "Output File";
+            this.btnOutput.UseVisualStyleBackColor = true;
+            this.btnOutput.Click += new System.EventHandler(this.btnOutput_Click);
             // 
-            // dataGridView1
+            // dgvOutPut
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 155);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(776, 533);
-            this.dataGridView1.TabIndex = 6;
+            this.dgvOutPut.AllowUserToAddRows = false;
+            this.dgvOutPut.AllowUserToDeleteRows = false;
+            this.dgvOutPut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvOutPut.Location = new System.Drawing.Point(13, 152);
+            this.dgvOutPut.Name = "dgvOutPut";
+            this.dgvOutPut.ReadOnly = true;
+            this.dgvOutPut.Size = new System.Drawing.Size(775, 536);
+            this.dgvOutPut.TabIndex = 6;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.dgvOutPut);
+            this.Controls.Add(this.btnOutput);
             this.Controls.Add(this.btnCompare);
             this.Controls.Add(this.lblNewFile);
             this.Controls.Add(this.lblOldFile);
@@ -112,7 +116,7 @@
             this.Controls.Add(this.btnLoadOld);
             this.Name = "Form1";
             this.Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -125,8 +129,8 @@
         private System.Windows.Forms.Label lblOldFile;
         private System.Windows.Forms.Label lblNewFile;
         private System.Windows.Forms.Button btnCompare;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnOutput;
+        private System.Windows.Forms.DataGridView dgvOutPut;
     }
 }
 

@@ -23,6 +23,7 @@ namespace EaseEnrollCompare {
         public static List<CensusRow> Drops = new List<CensusRow>();
         public static List<CensusRow> Adds = new List<CensusRow>();
         public static List<CensusRow> Changes = new List<CensusRow>();
+        public static List<CensusRow> output = new List<CensusRow>();
 
         public Form1() {
             InitializeComponent();
@@ -149,6 +150,41 @@ namespace EaseEnrollCompare {
             PrintList(Adds);
             PrintList(Drops);
             PrintList(Changes);
+
+            output.AddRange(Adds);
+            output.AddRange(Drops);
+            output.AddRange(Changes);
+
+
+            BindingSource bindingSource = new BindingSource();
+            bindingSource.DataSource = Adds;
+            dgvOutPut.DataSource = output;
+        }
+
+        private void btnOutput_Click(object sender, EventArgs e) {
+            string OutputFile = string.Empty;
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
+                fbd.Description = "Select the directory to output files to";
+                fbd.ShowNewFolderButton = true;
+
+                // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
+                DialogResult result = fbd.ShowDialog();
+                if (result == DialogResult.OK) {
+                    OutputFile = fbd.SelectedPath;
+                }
+            }
+            if (OutputFile == string.Empty)
+                return;
+
+            OutputFile = OutputFile + @"\Changes_" + 
+                DateTime.Now.ToString("MMddyyyy") + ".csv";
+
+           using(TextWriter writer = new StreamWriter(OutputFile)) {
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
+                    csv.WriteRecords(output);
+                }
+            }
+
         }
     }
 }
