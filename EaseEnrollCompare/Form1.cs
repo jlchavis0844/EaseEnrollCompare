@@ -20,6 +20,8 @@ namespace EaseEnrollCompare {
 
         public static List<CensusRow> OldRecords = new List<CensusRow>();
         public static List<CensusRow> NewRecords = new List<CensusRow>();
+        public static List<CensusRow> OriginalOldRecords = new List<CensusRow>();
+        public static List<CensusRow> OriginalNewRecords = new List<CensusRow>();
         public static List<CensusRow> Drops = new List<CensusRow>();
         public static List<CensusRow> Adds = new List<CensusRow>();
         public static List<CensusRow> Changes = new List<CensusRow>();
@@ -47,14 +49,18 @@ namespace EaseEnrollCompare {
                         using(var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
                             csv.Configuration.HeaderValidated = null;
                             csv.Configuration.HasHeaderRecord = true;
+                            csv.Configuration.MissingFieldFound = null;
                             csv.Configuration.RegisterClassMap<CensusRowClassMap>();
 
                             try {
-                                OldRecords = csv.GetRecords<CensusRow>().ToList();
+                                OriginalOldRecords = OldRecords = csv.GetRecords<CensusRow>().ToList();
+                                int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
+                                Console.WriteLine(cnt + " lines removed");
                                 btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
                                 btnLoadOld.Enabled = false;
                             } catch (Exception ex) {
                                 Console.WriteLine(ex);
+                                ErrorMessage(ex);
                             }
                         }
                     }
@@ -83,14 +89,18 @@ namespace EaseEnrollCompare {
                         using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
                             csv.Configuration.HeaderValidated = null;
                             csv.Configuration.HasHeaderRecord = true;
+                            csv.Configuration.MissingFieldFound = null;
                             csv.Configuration.RegisterClassMap<CensusRowClassMap>();
 
                             try {
-                                NewRecords = csv.GetRecords<CensusRow>().ToList();
+                                OriginalNewRecords = NewRecords = csv.GetRecords<CensusRow>().ToList();
+                                int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
+                                Console.WriteLine(cnt + " lines removed");
                                 btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
                                 btnLoadNew.Enabled = false;
                             } catch (Exception ex) {
                                 Console.WriteLine(ex);
+                                ErrorMessage(ex);
                             }
                         }
                     }
@@ -103,6 +113,32 @@ namespace EaseEnrollCompare {
         private void PrintList<T>(List<T> list) {
             foreach(var t in list) {
                 Console.WriteLine(t.ToString());
+            }
+        }
+
+        private void RemoveColumns() {
+            foreach(DataGridViewColumn col in dgvOutPut.Columns) {
+                dgvOutPut.Columns[col.Name].Visible = false;
+            }
+            if (dgvOutPut.Columns.Count > 0) {
+                dgvOutPut.Columns["EID"].Visible = true;
+                dgvOutPut.Columns["FirstName"].Visible = true;
+                dgvOutPut.Columns["MiddleName"].Visible = true;
+                dgvOutPut.Columns["LastName"].Visible = true;
+                dgvOutPut.Columns["Relationship"].Visible = true;
+                dgvOutPut.Columns["HireDate"].Visible = true;
+                dgvOutPut.Columns["TerminationDate"].Visible = true;
+                dgvOutPut.Columns["JobClass"].Visible = true;
+                dgvOutPut.Columns["JobTitle"].Visible = true;
+                dgvOutPut.Columns["PayPeriods"].Visible = true;
+                dgvOutPut.Columns["PlanType"].Visible = true;
+                dgvOutPut.Columns["PlanDisplayName"].Visible = true;
+                dgvOutPut.Columns["EffectiveDate"].Visible = true;
+                dgvOutPut.Columns["CoverageDetails"].Visible = true;
+                dgvOutPut.Columns["ElectionStatus"].Visible = true;
+                dgvOutPut.Columns["EmployeeCostPerDeductionPeriod"].Visible = true;
+                dgvOutPut.Columns["Changes"].Visible = true;
+                dgvOutPut.Columns["Changes"].DisplayIndex = 0;
             }
         }
 
@@ -147,24 +183,30 @@ namespace EaseEnrollCompare {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
                 }
             }
-            PrintList(Adds);
-            PrintList(Drops);
-            PrintList(Changes);
+            //PrintList(Adds);
+            //PrintList(Drops);
+            //PrintList(Changes);
 
             output.AddRange(Adds);
             output.AddRange(Drops);
             output.AddRange(Changes);
 
+            dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType).ThenBy(o => o.EID).
+                ThenBy(o => o.RelationshipCode).ThenBy(o => o.FirstName).ToList();
 
-            BindingSource bindingSource = new BindingSource();
-            bindingSource.DataSource = Adds;
-            dgvOutPut.DataSource = output;
+            foreach(var col in dgvOutPut.Columns) {
+                Console.WriteLine(col.ToString());
+            }
+
+            RemoveColumns();
         }
 
         private void btnOutput_Click(object sender, EventArgs e) {
             string OutputFile = string.Empty;
             using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
+                string defaultPath = @"\\nas3\Shared\RALIM\TDSGroup-Kronos";
                 fbd.Description = "Select the directory to output files to";
+                fbd.SelectedPath = defaultPath;
                 fbd.ShowNewFolderButton = true;
 
                 // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
@@ -179,12 +221,81 @@ namespace EaseEnrollCompare {
             OutputFile = OutputFile + @"\Changes_" + 
                 DateTime.Now.ToString("MMddyyyy") + ".csv";
 
-           using(TextWriter writer = new StreamWriter(OutputFile)) {
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
-                    csv.WriteRecords(output);
+            try {
+                using (TextWriter writer = new StreamWriter(OutputFile)) {
+                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
+                        csv.WriteRecords(output);
+                    }
+                }
+                MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
+            } catch(Exception exc) {
+                MessageBox.Show("Could not write file:" + OutputFile + "\n" + exc.Message, "Write Error", MessageBoxButtons.OK);
+            }
+
+        }
+
+        private bool ShouldBeRemovedOld(CensusRow row) {
+            if (cbOldTerm.Checked) {
+                if (row.ElectionStatus == "Terminated")
+                    return true;
+            }
+
+            if (cbOldWaive.Checked) {
+                if(row.ElectionStatus == "Waived") {
+                    return true;
                 }
             }
 
+            return false;
+        }
+
+        private bool ShouldBeRemovedNew(CensusRow row) {
+            if (cbNewTerm.Checked) {
+                if (row.ElectionStatus == "Terminated")
+                    return true;
+            }
+
+            if (cbNewWavied.Checked) {
+                if (row.ElectionStatus == "Waived") {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void cbOldWaive_CheckedChanged(object sender, EventArgs e) {
+            
+        }
+
+        private void ErrorMessage(Exception ExIn) {
+            MessageBox.Show("ERR: " + ExIn.Message, "ERROR", MessageBoxButtons.OK);
+        }
+
+        private void btnReset_Click(object sender, EventArgs e) {
+            OLDINPUTFILE = string.Empty;
+            NEWINPUTFILE = string.Empty;
+            OldLoaded = false;
+            NewLoaded = false;
+
+            OldRecords = new List<CensusRow>();
+            NewRecords = new List<CensusRow>();
+            OriginalOldRecords = new List<CensusRow>();
+            OriginalNewRecords = new List<CensusRow>();
+            Drops = new List<CensusRow>();
+            Adds = new List<CensusRow>();
+            Changes = new List<CensusRow>();
+            output = new List<CensusRow>();
+
+            btnLoadNew.Enabled = true;
+            btnLoadOld.Enabled = true;
+            btnLoadNew.Text = "Load new file";
+            btnLoadOld.Text = "Load old file";
+
+            lblNewFile.Text = "Load new file";
+            lblOldFile.Text = "Load old file";
+            dgvOutPut.DataSource = null;
+            dgvOutPut.Rows.Clear();
         }
     }
 }

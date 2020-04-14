@@ -30,6 +30,11 @@
             this.btnCompare = new System.Windows.Forms.Button();
             this.btnOutput = new System.Windows.Forms.Button();
             this.dgvOutPut = new System.Windows.Forms.DataGridView();
+            this.cbOldWaive = new System.Windows.Forms.CheckBox();
+            this.cbOldTerm = new System.Windows.Forms.CheckBox();
+            this.cbNewTerm = new System.Windows.Forms.CheckBox();
+            this.cbNewWavied = new System.Windows.Forms.CheckBox();
+            this.btnReset = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +50,7 @@
             // 
             // btnLoadNew
             // 
-            this.btnLoadNew.Location = new System.Drawing.Point(31, 71);
+            this.btnLoadNew.Location = new System.Drawing.Point(31, 96);
             this.btnLoadNew.Name = "btnLoadNew";
             this.btnLoadNew.Size = new System.Drawing.Size(164, 23);
             this.btnLoadNew.TabIndex = 1;
@@ -65,15 +70,15 @@
             // lblNewFile
             // 
             this.lblNewFile.AutoSize = true;
-            this.lblNewFile.Location = new System.Drawing.Point(216, 76);
+            this.lblNewFile.Location = new System.Drawing.Point(216, 101);
             this.lblNewFile.Name = "lblNewFile";
-            this.lblNewFile.Size = new System.Drawing.Size(91, 13);
+            this.lblNewFile.Size = new System.Drawing.Size(97, 13);
             this.lblNewFile.TabIndex = 3;
-            this.lblNewFile.Text = "Waiting for old file";
+            this.lblNewFile.Text = "Waiting for new file";
             // 
             // btnCompare
             // 
-            this.btnCompare.Location = new System.Drawing.Point(31, 114);
+            this.btnCompare.Location = new System.Drawing.Point(31, 155);
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(164, 23);
             this.btnCompare.TabIndex = 4;
@@ -83,7 +88,7 @@
             // 
             // btnOutput
             // 
-            this.btnOutput.Location = new System.Drawing.Point(219, 114);
+            this.btnOutput.Location = new System.Drawing.Point(219, 155);
             this.btnOutput.Name = "btnOutput";
             this.btnOutput.Size = new System.Drawing.Size(164, 23);
             this.btnOutput.TabIndex = 5;
@@ -96,17 +101,81 @@
             this.dgvOutPut.AllowUserToAddRows = false;
             this.dgvOutPut.AllowUserToDeleteRows = false;
             this.dgvOutPut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvOutPut.Location = new System.Drawing.Point(13, 152);
+            this.dgvOutPut.Location = new System.Drawing.Point(13, 204);
             this.dgvOutPut.Name = "dgvOutPut";
             this.dgvOutPut.ReadOnly = true;
-            this.dgvOutPut.Size = new System.Drawing.Size(775, 536);
+            this.dgvOutPut.Size = new System.Drawing.Size(775, 484);
             this.dgvOutPut.TabIndex = 6;
+            // 
+            // cbOldWaive
+            // 
+            this.cbOldWaive.AutoSize = true;
+            this.cbOldWaive.Checked = true;
+            this.cbOldWaive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbOldWaive.Location = new System.Drawing.Point(31, 3);
+            this.cbOldWaive.Name = "cbOldWaive";
+            this.cbOldWaive.Size = new System.Drawing.Size(106, 17);
+            this.cbOldWaive.TabIndex = 7;
+            this.cbOldWaive.Text = "Remove Wavied";
+            this.cbOldWaive.UseVisualStyleBackColor = true;
+            this.cbOldWaive.CheckedChanged += new System.EventHandler(this.cbOldWaive_CheckedChanged);
+            // 
+            // cbOldTerm
+            // 
+            this.cbOldTerm.AutoSize = true;
+            this.cbOldTerm.Checked = true;
+            this.cbOldTerm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbOldTerm.Location = new System.Drawing.Point(173, 3);
+            this.cbOldTerm.Name = "cbOldTerm";
+            this.cbOldTerm.Size = new System.Drawing.Size(122, 17);
+            this.cbOldTerm.TabIndex = 8;
+            this.cbOldTerm.Text = "Remove Terminated";
+            this.cbOldTerm.UseVisualStyleBackColor = true;
+            // 
+            // cbNewTerm
+            // 
+            this.cbNewTerm.AutoSize = true;
+            this.cbNewTerm.Checked = true;
+            this.cbNewTerm.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbNewTerm.Location = new System.Drawing.Point(173, 73);
+            this.cbNewTerm.Name = "cbNewTerm";
+            this.cbNewTerm.Size = new System.Drawing.Size(122, 17);
+            this.cbNewTerm.TabIndex = 10;
+            this.cbNewTerm.Text = "Remove Terminated";
+            this.cbNewTerm.UseVisualStyleBackColor = true;
+            // 
+            // cbNewWavied
+            // 
+            this.cbNewWavied.AutoSize = true;
+            this.cbNewWavied.Checked = true;
+            this.cbNewWavied.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbNewWavied.Location = new System.Drawing.Point(31, 73);
+            this.cbNewWavied.Name = "cbNewWavied";
+            this.cbNewWavied.Size = new System.Drawing.Size(106, 17);
+            this.cbNewWavied.TabIndex = 9;
+            this.cbNewWavied.Text = "Remove Wavied";
+            this.cbNewWavied.UseVisualStyleBackColor = true;
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(411, 155);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(75, 23);
+            this.btnReset.TabIndex = 11;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.btnReset);
+            this.Controls.Add(this.cbNewTerm);
+            this.Controls.Add(this.cbNewWavied);
+            this.Controls.Add(this.cbOldTerm);
+            this.Controls.Add(this.cbOldWaive);
             this.Controls.Add(this.dgvOutPut);
             this.Controls.Add(this.btnOutput);
             this.Controls.Add(this.btnCompare);
@@ -131,6 +200,11 @@
         private System.Windows.Forms.Button btnCompare;
         private System.Windows.Forms.Button btnOutput;
         private System.Windows.Forms.DataGridView dgvOutPut;
+        private System.Windows.Forms.CheckBox cbOldWaive;
+        private System.Windows.Forms.CheckBox cbOldTerm;
+        private System.Windows.Forms.CheckBox cbNewTerm;
+        private System.Windows.Forms.CheckBox cbNewWavied;
+        private System.Windows.Forms.Button btnReset;
     }
 }
 

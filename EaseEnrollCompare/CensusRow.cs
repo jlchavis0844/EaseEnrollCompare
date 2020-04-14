@@ -1,6 +1,7 @@
 ﻿using CsvHelper.Configuration;
 
 public class CensusRow {
+    public string Changes { get; set; }
     public string CompanyName { get; set; }
     public string EID { get; set; }
     public string Location { get; set; }
@@ -98,7 +99,6 @@ public class CensusRow {
     public string NewBusiness { get; set; }
     public string VSPCode { get; set; }
 
-    public string Changes { get; set; }
 
     public bool Compare(CensusRow rhs) {
         bool matched = true;
@@ -198,7 +198,7 @@ public class CensusRow {
             this.PayCycle + " | " + this.PayPeriods + " | " + this.CostFactor + " | " + this.TobaccoUser + " | " + this.Disabled + " | " +
             this.MedicareADate + " | " + this.MedicareBDate + " | " + this.MedicareCDate + " | " + this.MedicareDDate + " | " +
             this.MedicalPCPName + " | " + this.MedicalPCPID + " | " + this.DentalPCPName + " | " + this.DentalPCPID + " | " +
-            this.IPANumber + " | " + this.OBGYN + " | " + this.BenefitEligibleDate + " | " + this.UnlockEnrollmentDate + " | " +
+            this.IPANumber + " | " + this.OBGYN + " | " + this.BenefitEligibleDate + " | " + //this.UnlockEnrollmentDate + " | " +
             this.OriginalEffectiveDateInfo + " | " + this.SubscriberKey + " | " + this.PlanType + " | " + this.PlanEffectiveStartDate + " | " +
             this.PlanEffectiveEndDate + " | " + this.PlanAdminName + " | " + this.PlanDisplayName + " | " + this.PlanImportID + " | " +
             this.EffectiveDate + " | " + this.CoverageDetails + " | " + this.ElectionStatus + " | " + this.RiderCodes + " | " +
