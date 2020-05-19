@@ -103,80 +103,95 @@ public class CensusRow {
     public bool Compare(CensusRow rhs) {
         bool matched = true;
 
+        if (this.Changes == null)
+            this.Changes = string.Empty;
+
+        if (rhs.Changes == null)
+            rhs.Changes = string.Empty;
+
         if (this.ToString() != rhs.ToString()) {
 
              matched = false;
             if (this.SSN != rhs.SSN) {
-                rhs.Changes = this.Changes = this.Changes + " SSN ";
+                rhs.Changes = this.Changes = this.Changes + "|SSN|";
             }
             if (this.Address1 != rhs.Address1) {
-                rhs.Changes = this.Changes = this.Changes + " Address1 ";
+                rhs.Changes = this.Changes = this.Changes + "|Address1|";
             }
             if (this.Address2 != rhs.Address2) {
-                rhs.Changes = this.Changes = this.Changes + " Address2 ";
+                rhs.Changes = this.Changes = this.Changes + "|Address2|";
             }
             if (this.City != rhs.City) {
-                rhs.Changes = this.Changes = this.Changes + " City ";
+                rhs.Changes = this.Changes = this.Changes + "|City|";
             }
             if (this.State != rhs.State) {
-                rhs.Changes = this.Changes = this.Changes + " State ";
+                rhs.Changes = this.Changes = this.Changes + "|State|";
             }
             if (this.Zip != rhs.Zip) {
-                rhs.Changes = this.Changes = this.Changes + " Zip ";
+                rhs.Changes = this.Changes = this.Changes + "|Zip|";
             }
             if (this.PersonalPhone != rhs.PersonalPhone) {
-                rhs.Changes = this.Changes = this.Changes + " PersonalPhone ";
+                rhs.Changes = this.Changes = this.Changes + "|PersonalPhone|";
             }
             if (this.WorkPhone != rhs.WorkPhone) {
-                rhs.Changes = this.Changes = this.Changes + " WorkPhone ";
+                rhs.Changes = this.Changes = this.Changes + "|WorkPhone|";
             }
             if (this.MobilePhone != rhs.MobilePhone) {
-                rhs.Changes = this.Changes = this.Changes + " MobilePhone ";
+                rhs.Changes = this.Changes = this.Changes + "|MobilePhone|";
             }
             if (this.EmployeeStatus != rhs.EmployeeStatus) {
-                rhs.Changes = this.Changes = this.Changes + " EmployeeStatus ";
+                rhs.Changes = this.Changes = this.Changes + "|EmployeeStatus|";
             }
             if (this.HireDate != rhs.HireDate) {
-                rhs.Changes = this.Changes = this.Changes + " HireDate ";
+                rhs.Changes = this.Changes = this.Changes + "|HireDate|";
             }
             if (this.TerminationDate != rhs.TerminationDate) {
-                rhs.Changes = this.Changes = this.Changes + " TerminationDate ";
+                rhs.Changes = this.Changes = this.Changes + "|TerminationDate|";
             }
             if (this.JobClass != rhs.JobClass) {
-                rhs.Changes = this.Changes = this.Changes + " JobClass ";
+                rhs.Changes = this.Changes = this.Changes + "|JobClass|";
             }
             if (this.Division != rhs.Division) {
-                rhs.Changes = this.Changes = this.Changes + " Division ";
+                rhs.Changes = this.Changes = this.Changes + "|Division|";
             }
             if (this.MaritalStatus != rhs.MaritalStatus) {
-                rhs.Changes = this.Changes = this.Changes + " MaritalStatus ";
+                rhs.Changes = this.Changes = this.Changes + "|MaritalStatus|";
             }
             if (this.ScheduledHours != rhs.ScheduledHours) {
-                rhs.Changes = this.Changes = this.Changes + " ScheduledHours ";
+                rhs.Changes = this.Changes = this.Changes + "|ScheduledHours|";
             }
             if (this.PayCycle != rhs.PayCycle) {
-                rhs.Changes = this.Changes = this.Changes + " PayCycle ";
+                rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
             }
             if (this.PlanDisplayName != rhs.PlanDisplayName) {
-                rhs.Changes = this.Changes = this.Changes + " PlanDisplayName ";
+                rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
             if (this.CoverageDetails != rhs.CoverageDetails) {
-                rhs.Changes = this.Changes = this.Changes + " CoverageDetails ";
+                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails|";
             }
             if (this.EffectiveDate != rhs.EffectiveDate) {
-                rhs.Changes = this.Changes = this.Changes + " EffectiveDate ";
+                rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
             }
             if (this.ElectionStatus != rhs.ElectionStatus) {
-                rhs.Changes = this.Changes = this.Changes + " ElectionStatus ";
+                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus|";
             }
             if (this.TotalRate != rhs.TotalRate) {
-                rhs.Changes = this.Changes = this.Changes + " TotalRate ";
+                rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
             }
             if (this.EmployeeCostPerDeductionPeriod != rhs.EmployeeCostPerDeductionPeriod) {
-                rhs.Changes = this.Changes = this.Changes + " EmployeeCostPerDeductionPeriod ";
+                rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
             }
             if (this.ESignDate != rhs.ESignDate) {
-                rhs.Changes = this.Changes = this.Changes + " ESignDate ";
+                rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+            }
+
+            rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
+            if (rhs.Changes.StartsWith("|")) {
+                rhs.Changes = rhs.Changes.Substring(1);
+            }
+
+            if (rhs.Changes.EndsWith("|")) {
+                rhs.Changes = rhs.Changes.Substring(0, rhs.Changes.Length - 1);
             }
         }
 
@@ -185,132 +200,131 @@ public class CensusRow {
 
     // override to print all frields in a CensusRow
     public override string ToString() {
-        string retStr = this.CompanyName + " | " + this.EID + " | " + this.Location + " | " + this.FirstName + " | " +
-            this.MiddleName + " | " + this.LastName + " | " + this.Relationship + " | " + this.RelationshipCode + " | " +
-            this.SSN + " | " + this.Gender + " | " + this.BirthDate + " | " + this.Race + " | " + this.Citizenship + " | " +
-            this.Address1 + " | " + this.Address2 + " | " + this.City + " | " + this.State + " | " + this.Zip + " | " +
-            this.County + " | " + this.Country + " | " + this.PersonalPhone + " | " + this.WorkPhone + " | " +
-            this.MobilePhone + " | " + this.Email + " | " + this.PersonalEmail + " | " + this.EmployeeType + " | " +
-            this.EmployeeStatus + " | " + this.HireDate + " | " + this.TerminationDate + " | " + this.Department + " | " +
-            this.Division + " | " + this.JobClass + " | " + this.JobTitle + " | " + this.MaritalStatus + " | " + this.MaritalDate + " | " +
-            this.MaritalLocation + " | " + this.StudentStatus + " | " + this.ScheduledHours + " | " + this.SickHours + " | " +
-            this.PersonalHours + " | " + this.W2Wages + " | " + this.Compensation + " | " + this.CompensationType + " | " +
-            this.PayCycle + " | " + this.PayPeriods + " | " + this.CostFactor + " | " + this.TobaccoUser + " | " + this.Disabled + " | " +
-            this.MedicareADate + " | " + this.MedicareBDate + " | " + this.MedicareCDate + " | " + this.MedicareDDate + " | " +
-            this.MedicalPCPName + " | " + this.MedicalPCPID + " | " + this.DentalPCPName + " | " + this.DentalPCPID + " | " +
-            this.IPANumber + " | " + this.OBGYN + " | " + this.BenefitEligibleDate + " | " + //this.UnlockEnrollmentDate + " | " +
-            this.OriginalEffectiveDateInfo + " | " + this.SubscriberKey + " | " + this.PlanType + " | " + this.PlanEffectiveStartDate + " | " +
-            this.PlanEffectiveEndDate + " | " + this.PlanAdminName + " | " + this.PlanDisplayName + " | " + this.PlanImportID + " | " +
-            this.EffectiveDate + " | " + this.CoverageDetails + " | " + this.ElectionStatus + " | " + this.RiderCodes + " | " +
-            this.Action + " | " + this.WaiveReason + " | " + this.PolicyNumber + " | " + this.SubgroupNumber + " | " +
-            this.AgeDetermination + " | " + this.Carrier + " | " + this.TotalRate + " | " + this.EmployeeRate + " | " +
-            this.SpouseRate + " | " + this.ChildrenRate + " | " + this.EmployeeContribution + " | " + this.EmployeePreTaxCost + " | " +
-            this.EmployeePostTaxCost + " | " + this.EmployeeCostPerDeductionPeriod + " | " + this.PlanDeductionCycle + " | " + 
-            this.ESignDate + " | " + this.CalPERS_ID + " | " + Changes;
+        string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | " +
+            this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | " +
+            this.SSN.Trim() + " | " + this.Gender.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " +
+            this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " +
+            this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " +
+            this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | " +
+            this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | " +
+            this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | " +
+            this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | " +
+            this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.Compensation.Trim() + " | " + this.CompensationType + " | " +
+            this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | " +
+            this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | " +
+            this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | " +
+            this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | " + //this.UnlockEnrollmentDate + " | " +
+            this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | " +
+            this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | " +
+            this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | " +
+            this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | " +
+            this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
+            this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
+            this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
+            this.ESignDate.Trim() + " | " + this.CalPERS_ID.Trim() + " | " + Changes.Trim();
 
-        return retStr.Replace("  ", " ");
+        return retStr.Replace("  ", " ").Trim();
     }
 }
 
 public class CensusRowClassMap : ClassMap<CensusRow> {
     public CensusRowClassMap() {
-        this.Map(m => m.CompanyName).Name("Company Name");
-        this.Map(m => m.EID).Name("EID");
-        this.Map(m => m.Location).Name("Location");
-        this.Map(m => m.FirstName).Name("First Name");
-        this.Map(m => m.MiddleName).Name("Middle Name");
-        this.Map(m => m.LastName).Name("Last Name");
-        this.Map(m => m.Relationship).Name("Relationship");
-        this.Map(m => m.RelationshipCode).Name("Relationship Code");
-        this.Map(m => m.SSN).Name("SSN");
-        this.Map(m => m.Gender).Name("Gender");
-        this.Map(m => m.BirthDate).Name("Birth Date");
-        this.Map(m => m.Race).Name("Race");
-        this.Map(m => m.Citizenship).Name("Citizenship");
-        this.Map(m => m.Address1).Name("Address 1");
-        this.Map(m => m.Address2).Name("Address 2");
-        this.Map(m => m.City).Name("City");
-        this.Map(m => m.State).Name("State");
-        this.Map(m => m.Zip).Name("Zip");
-        this.Map(m => m.County).Name("County");
-        this.Map(m => m.Country).Name("Country");
-        this.Map(m => m.PersonalPhone).Name("Personal Phone");
-        this.Map(m => m.WorkPhone).Name("Work Phone");
-        this.Map(m => m.MobilePhone).Name("Mobile Phone");
-        this.Map(m => m.Email).Name("Email");
-        this.Map(m => m.PersonalEmail).Name("Personal Email");
-        this.Map(m => m.EmployeeType).Name("Employee Type");
-        this.Map(m => m.EmployeeStatus).Name("Employee Status");
-        this.Map(m => m.HireDate).Name("Hire Date");
-        this.Map(m => m.TerminationDate).Name("Termination Date");
-        this.Map(m => m.Department).Name("Department");
-        this.Map(m => m.Division).Name("Division");
-        this.Map(m => m.JobClass).Name("Job Class");
-        this.Map(m => m.JobTitle).Name("Job Title");
-        this.Map(m => m.MaritalStatus).Name("Marital Status");
-        this.Map(m => m.MaritalDate).Name("Marital Date");
-        this.Map(m => m.MaritalLocation).Name("Marital Location");
-        this.Map(m => m.StudentStatus).Name("Student Status");
-        this.Map(m => m.ScheduledHours).Name("Scheduled Hours");
-        this.Map(m => m.SickHours).Name("Sick Hours");
-        this.Map(m => m.PersonalHours).Name("Personal Hours");
-        this.Map(m => m.W2Wages).Name("W2 Wages");
-        this.Map(m => m.Compensation).Name("Compensation");
-        this.Map(m => m.CompensationType).Name("Compensation Type");
-        this.Map(m => m.PayCycle).Name("Pay Cycle");
-        this.Map(m => m.PayPeriods).Name("Pay Periods");
-        this.Map(m => m.CostFactor).Name("Cost Factor");
-        this.Map(m => m.TobaccoUser).Name("Tobacco User");
-        this.Map(m => m.Disabled).Name("Disabled");
-        this.Map(m => m.MedicareADate).Name("Medicare A Date");
-        this.Map(m => m.MedicareBDate).Name("Medicare B Date");
-        this.Map(m => m.MedicareCDate).Name("Medicare C Date");
-        this.Map(m => m.MedicareDDate).Name("Medicare D Date");
-        this.Map(m => m.MedicalPCPName).Name("Medical PCP Name");
-        this.Map(m => m.MedicalPCPID).Name("Medical PCP ID");
-        this.Map(m => m.DentalPCPName).Name("Dental PCP Name");
-        this.Map(m => m.DentalPCPID).Name("Dental PCP ID");
-        this.Map(m => m.IPANumber).Name("IPA Number");
-        this.Map(m => m.OBGYN).Name("OBGYN");
-        this.Map(m => m.BenefitEligibleDate).Name("Benefit Eligible Date");
-        this.Map(m => m.UnlockEnrollmentDate).Name("Unlock Enrollment Date");
-        this.Map(m => m.OriginalEffectiveDateInfo).Name("Original Effective Date Info");
-        this.Map(m => m.SubscriberKey).Name("Subscriber Key");
-        this.Map(m => m.PlanType).Name("Plan Type");
-        this.Map(m => m.PlanEffectiveStartDate).Name("Plan Effective Start Date");
-        this.Map(m => m.PlanEffectiveEndDate).Name("Plan Effective End Date");
-        this.Map(m => m.PlanAdminName).Name("Plan Admin Name");
-        this.Map(m => m.PlanDisplayName).Name("Plan Display Name");
-        this.Map(m => m.PlanImportID).Name("Plan Import ID");
-        this.Map(m => m.EffectiveDate).Name("Effective Date");
-        this.Map(m => m.ActivityDate).Name("Activity Date");
-        this.Map(m => m.CoverageDetails).Name("Coverage Details");
-        this.Map(m => m.ElectionStatus).Name("Election Status");
-        this.Map(m => m.ProcessedDate).Name("Processed Date");
-        this.Map(m => m.RiderCodes).Name("Rider Codes");
-        this.Map(m => m.Action).Name("Action");
-        this.Map(m => m.WaiveReason).Name("Waive Reason");
-        this.Map(m => m.PolicyNumber).Name("Policy Number");
-        this.Map(m => m.SubgroupNumber).Name("Subgroup Number");
-        this.Map(m => m.AgeDetermination).Name("Age Determination");
-        this.Map(m => m.Carrier).Name("Carrier");
-        this.Map(m => m.TotalRate).Name("Total Rate");
-        this.Map(m => m.EmployeeRate).Name("Employee Rate");
-        this.Map(m => m.SpouseRate).Name("Spouse Rate");
-        this.Map(m => m.ChildrenRate).Name("Children Rate");
-        this.Map(m => m.EmployeeContribution).Name("Employee Contribution");
-        this.Map(m => m.EmployeePreTaxCost).Name("Employee Pre-Tax Cost");
-        this.Map(m => m.EmployeePostTaxCost).Name("Employee Post-Tax Cost");
-        this.Map(m => m.EmployeeCostPerDeductionPeriod).Name("Employee Cost Per Deduction Period");
-        this.Map(m => m.PlanDeductionCycle).Name("Plan Deduction Cycle");
-        this.Map(m => m.LastModifiedDate).Name("Last Modified Date");
-        this.Map(m => m.LastModifiedBy).Name("Last Modified By");
-        this.Map(m => m.ESignDate).Name("E-Sign Date");
-        this.Map(m => m.CalPERS_ID).Name("CalPERS ID");
-        this.Map(m => m.EnrolledBy).Name("Enrolled By");
-        this.Map(m => m.NewBusiness).Name("New Business");
-        this.Map(m => m.VSPCode).Name("VSP Code");
-
+        this.Map(m => m.CompanyName).Name("Company Name").ToString().Trim();
+        this.Map(m => m.EID).Name("EID").ToString().Trim();
+        this.Map(m => m.Location).Name("Location").ToString().Trim();
+        this.Map(m => m.FirstName).Name("First Name").ToString().Trim();
+        this.Map(m => m.MiddleName).Name("Middle Name").ToString().Trim();
+        this.Map(m => m.LastName).Name("Last Name").ToString().Trim();
+        this.Map(m => m.Relationship).Name("Relationship").ToString().Trim();
+        this.Map(m => m.RelationshipCode).Name("Relationship Code").ToString().Trim();
+        this.Map(m => m.SSN).Name("SSN").ToString().Trim();
+        this.Map(m => m.Gender).Name("Gender").ToString().Trim();
+        this.Map(m => m.BirthDate).Name("Birth Date").ToString().Trim();
+        this.Map(m => m.Race).Name("Race").ToString().Trim();
+        this.Map(m => m.Citizenship).Name("Citizenship").ToString().Trim();
+        this.Map(m => m.Address1).Name("Address 1").ToString().Trim();
+        this.Map(m => m.Address2).Name("Address 2").ToString().Trim();
+        this.Map(m => m.City).Name("City").ToString().Trim();
+        this.Map(m => m.State).Name("State").ToString().Trim();
+        this.Map(m => m.Zip).Name("Zip").ToString().Trim();
+        this.Map(m => m.County).Name("County").ToString().Trim();
+        this.Map(m => m.Country).Name("Country").ToString().Trim();
+        this.Map(m => m.PersonalPhone).Name("Personal Phone").ToString().Trim();
+        this.Map(m => m.WorkPhone).Name("Work Phone").ToString().Trim();
+        this.Map(m => m.MobilePhone).Name("Mobile Phone").ToString().Trim();
+        this.Map(m => m.Email).Name("Email").ToString().Trim();
+        this.Map(m => m.PersonalEmail).Name("Personal Email").ToString().Trim();
+        this.Map(m => m.EmployeeType).Name("Employee Type").ToString().Trim();
+        this.Map(m => m.EmployeeStatus).Name("Employee Status").ToString().Trim();
+        this.Map(m => m.HireDate).Name("Hire Date").ToString().Trim();
+        this.Map(m => m.TerminationDate).Name("Termination Date").ToString().Trim();
+        this.Map(m => m.Department).Name("Department").ToString().Trim();
+        this.Map(m => m.Division).Name("Division").ToString().Trim();
+        this.Map(m => m.JobClass).Name("Job Class").ToString().Trim();
+        this.Map(m => m.JobTitle).Name("Job Title").ToString().Trim();
+        this.Map(m => m.MaritalStatus).Name("Marital Status").ToString().Trim();
+        this.Map(m => m.MaritalDate).Name("Marital Date").ToString().Trim();
+        this.Map(m => m.MaritalLocation).Name("Marital Location").ToString().Trim();
+        this.Map(m => m.StudentStatus).Name("Student Status").ToString().Trim();
+        this.Map(m => m.ScheduledHours).Name("Scheduled Hours").ToString().Trim();
+        this.Map(m => m.SickHours).Name("Sick Hours").ToString().Trim();
+        this.Map(m => m.PersonalHours).Name("Personal Hours").ToString().Trim();
+        this.Map(m => m.W2Wages).Name("W2 Wages").ToString().Trim();
+        this.Map(m => m.Compensation).Name("Compensation").ToString().Trim();
+        this.Map(m => m.CompensationType).Name("Compensation Type").ToString().Trim();
+        this.Map(m => m.PayCycle).Name("Pay Cycle").ToString().Trim();
+        this.Map(m => m.PayPeriods).Name("Pay Periods").ToString().Trim();
+        this.Map(m => m.CostFactor).Name("Cost Factor").ToString().Trim();
+        this.Map(m => m.TobaccoUser).Name("Tobacco User").ToString().Trim();
+        this.Map(m => m.Disabled).Name("Disabled").ToString().Trim();
+        this.Map(m => m.MedicareADate).Name("Medicare A Date").ToString().Trim();
+        this.Map(m => m.MedicareBDate).Name("Medicare B Date").ToString().Trim();
+        this.Map(m => m.MedicareCDate).Name("Medicare C Date").ToString().Trim();
+        this.Map(m => m.MedicareDDate).Name("Medicare D Date").ToString().Trim();
+        this.Map(m => m.MedicalPCPName).Name("Medical PCP Name").ToString().Trim();
+        this.Map(m => m.MedicalPCPID).Name("Medical PCP ID").ToString().Trim();
+        this.Map(m => m.DentalPCPName).Name("Dental PCP Name").ToString().Trim();
+        this.Map(m => m.DentalPCPID).Name("Dental PCP ID").ToString().Trim();
+        this.Map(m => m.IPANumber).Name("IPA Number").ToString().Trim();
+        this.Map(m => m.OBGYN).Name("OBGYN").ToString().Trim();
+        this.Map(m => m.BenefitEligibleDate).Name("Benefit Eligible Date").ToString().Trim();
+        this.Map(m => m.UnlockEnrollmentDate).Name("Unlock Enrollment Date").ToString().Trim();
+        this.Map(m => m.OriginalEffectiveDateInfo).Name("Original Effective Date Info").ToString().Trim();
+        this.Map(m => m.SubscriberKey).Name("Subscriber Key").ToString().Trim();
+        this.Map(m => m.PlanType).Name("Plan Type").ToString().Trim();
+        this.Map(m => m.PlanEffectiveStartDate).Name("Plan Effective Start Date").ToString().Trim();
+        this.Map(m => m.PlanEffectiveEndDate).Name("Plan Effective End Date").ToString().Trim();
+        this.Map(m => m.PlanAdminName).Name("Plan Admin Name").ToString().Trim();
+        this.Map(m => m.PlanDisplayName).Name("Plan Display Name").ToString().Trim();
+        this.Map(m => m.PlanImportID).Name("Plan Import ID").ToString().Trim();
+        this.Map(m => m.EffectiveDate).Name("Effective Date").ToString().Trim();
+        this.Map(m => m.ActivityDate).Name("Activity Date").ToString().Trim();
+        this.Map(m => m.CoverageDetails).Name("Coverage Details").ToString().Trim();
+        this.Map(m => m.ElectionStatus).Name("Election Status").ToString().Trim();
+        this.Map(m => m.ProcessedDate).Name("Processed Date").ToString().Trim();
+        this.Map(m => m.RiderCodes).Name("Rider Codes").ToString().Trim();
+        this.Map(m => m.Action).Name("Action").ToString().Trim();
+        this.Map(m => m.WaiveReason).Name("Waive Reason").ToString().Trim();
+        this.Map(m => m.PolicyNumber).Name("Policy Number").ToString().Trim();
+        this.Map(m => m.SubgroupNumber).Name("Subgroup Number").ToString().Trim();
+        this.Map(m => m.AgeDetermination).Name("Age Determination").ToString().Trim();
+        this.Map(m => m.Carrier).Name("Carrier").ToString().Trim();
+        this.Map(m => m.TotalRate).Name("Total Rate").ToString().Trim();
+        this.Map(m => m.EmployeeRate).Name("Employee Rate").ToString().Trim();
+        this.Map(m => m.SpouseRate).Name("Spouse Rate").ToString().Trim();
+        this.Map(m => m.ChildrenRate).Name("Children Rate").ToString().Trim();
+        this.Map(m => m.EmployeeContribution).Name("Employee Contribution").ToString().Trim();
+        this.Map(m => m.EmployeePreTaxCost).Name("Employee Pre-Tax Cost").ToString().Trim();
+        this.Map(m => m.EmployeePostTaxCost).Name("Employee Post-Tax Cost").ToString().Trim();
+        this.Map(m => m.EmployeeCostPerDeductionPeriod).Name("Employee Cost Per Deduction Period").ToString().Trim();
+        this.Map(m => m.PlanDeductionCycle).Name("Plan Deduction Cycle").ToString().Trim();
+        this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
+        this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
+        this.Map(m => m.ESignDate).Name("E-Sign Date").ToString().Trim();
+        this.Map(m => m.CalPERS_ID).Name("CalPERS ID").ToString().Trim();
+        this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
+        this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();
+        this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
 
         // Map(m => m.EnrolledBy).Name("Enrolled By");
         // Map(m => m.NewBusiness).Name("New Business");

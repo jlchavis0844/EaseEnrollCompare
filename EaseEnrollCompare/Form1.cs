@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using OfficeOpenXml;
+
 
 namespace EaseEnrollCompare {
     public partial class Form1 : Form {
@@ -28,12 +31,19 @@ namespace EaseEnrollCompare {
         public static List<CensusRow> output = new List<CensusRow>();
 
         public Form1() {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             InitializeComponent();
+            dpActiveDate.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        }
+
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            // Log the exception, display it, etc
+            MessageBox.Show((e.ExceptionObject as Exception).Message,"UNHANDLED EXCEPTION", MessageBoxButtons.OK);
         }
 
         private void btnLoadOld_Click(object sender, EventArgs e) {
-
-            using(OpenFileDialog ofd = new OpenFileDialog()) {
+            btnLoadOld.Enabled = false;
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
                 ofd.Filter = "CSV File (*.csv) | *.csv";
                 ofd.RestoreDirectory = true;
                 ofd.FilterIndex = 1;
@@ -57,7 +67,7 @@ namespace EaseEnrollCompare {
                                 int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
                                 Console.WriteLine(cnt + " lines removed");
                                 btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
-                                btnLoadOld.Enabled = false;
+                                
                             } catch (Exception ex) {
                                 Console.WriteLine(ex);
                                 ErrorMessage(ex);
@@ -66,13 +76,14 @@ namespace EaseEnrollCompare {
                     }
                 } else {
                     MessageBox.Show("No File loaded, Please try again", "NO FILE", MessageBoxButtons.OK);
+                    btnLoadOld.Enabled = true;
                 }
             }
 
         }
 
         private void btnLoadNew_Click(object sender, EventArgs e) {
-
+            btnLoadNew.Enabled = false;
             using (OpenFileDialog ofd = new OpenFileDialog()) {
                 ofd.Filter = "CSV File (*.csv) | *.csv";
                 ofd.RestoreDirectory = true;
@@ -97,7 +108,7 @@ namespace EaseEnrollCompare {
                                 int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
                                 Console.WriteLine(cnt + " lines removed");
                                 btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
-                                btnLoadNew.Enabled = false;
+                                
                             } catch (Exception ex) {
                                 Console.WriteLine(ex);
                                 ErrorMessage(ex);
@@ -106,6 +117,7 @@ namespace EaseEnrollCompare {
                     }
                 } else {
                     MessageBox.Show("No File loaded, Please try again", "NO FILE", MessageBoxButtons.OK);
+                    btnLoadNew.Enabled = true;
                 }
             }
         }
@@ -143,7 +155,7 @@ namespace EaseEnrollCompare {
         }
 
         private void btnCompare_Click(object sender, EventArgs e) {
-
+            btnCompare.Enabled = false;
             NewRecords = (from rec in NewRecords
                          orderby rec.EID, rec.RelationshipCode, rec.FirstName
                          select rec).ToList();
@@ -202,9 +214,10 @@ namespace EaseEnrollCompare {
         }
 
         private void btnOutput_Click(object sender, EventArgs e) {
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             string OutputFile = string.Empty;
             using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
-                string defaultPath = @"\\nas3\Shared\RALIM\TDSGroup-Kronos";
+                string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
                 fbd.Description = "Select the directory to output files to";
                 fbd.SelectedPath = defaultPath;
                 fbd.ShowNewFolderButton = true;
@@ -219,17 +232,42 @@ namespace EaseEnrollCompare {
                 return;
 
             OutputFile = OutputFile + @"\Changes_" + 
-                DateTime.Now.ToString("MMddyyyy") + ".csv";
+                DateTime.Now.ToString("MMddyyyy") + ".xlsx";
+
+            string tempFile = Path.GetTempFileName();
 
             try {
-                using (TextWriter writer = new StreamWriter(OutputFile)) {
+                using (TextWriter writer = new StreamWriter(tempFile)) {
                     using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
                         csv.WriteRecords(output);
                     }
                 }
+
+                
+                var format = new ExcelTextFormat();
+                format.Delimiter = ',';
+                //format.EOL = "\r";
+                format.TextQualifier = '\"';
+
+                //if (File.Exists(OutputFile)) {
+                //    File.Delete(OutputFile);
+                //}
+
+                using (ExcelPackage package = new ExcelPackage(new FileInfo(OutputFile))) {
+                    ExcelWorksheet ws = package.Workbook.Worksheets.Add("Changes");
+                    ws.Cells["A1"].LoadFromText(new FileInfo(tempFile), format, OfficeOpenXml.Table.TableStyles.None, true);
+                    package.Save();
+                }
+
+                if (File.Exists(tempFile)) {
+                    File.Delete(tempFile);
+                }
+
                 MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
+
             } catch(Exception exc) {
                 MessageBox.Show("Could not write file:" + OutputFile + "\n" + exc.Message, "Write Error", MessageBoxButtons.OK);
+
             }
 
         }
@@ -240,9 +278,19 @@ namespace EaseEnrollCompare {
                     return true;
             }
 
-            if (cbOldWaive.Checked) {
+            if (cbOldWaived.Checked) {
                 if(row.ElectionStatus == "Waived") {
                     return true;
+                }
+            }
+
+            if (cbActiveOld.Checked) {
+                if (row.ElectionStatus == "Waived") {
+                    return true;
+                } else if(row.ElectionStatus == "Terminated"){
+                    if(DateTime.Parse(row.EffectiveDate)<= dpActiveDate.Value) {
+                        return true;
+                    }
                 }
             }
 
@@ -255,9 +303,19 @@ namespace EaseEnrollCompare {
                     return true;
             }
 
-            if (cbNewWavied.Checked) {
+            if (cbNewWaived.Checked) {
                 if (row.ElectionStatus == "Waived") {
                     return true;
+                }
+            }
+
+            if (cbActiveOld.Checked) {
+                if (row.ElectionStatus == "Waived") {
+                    return true;
+                } else if (row.ElectionStatus == "Terminated") {
+                    if (DateTime.Parse(row.EffectiveDate) <= dpActiveDate.Value) {
+                        return true;
+                    }
                 }
             }
 
@@ -287,6 +345,11 @@ namespace EaseEnrollCompare {
             Changes = new List<CensusRow>();
             output = new List<CensusRow>();
 
+            dpActiveDate.Enabled = false;
+            cbActiveNew.Checked = false;
+            cbActiveOld.Checked = false;
+            btnCompare.Enabled = true;
+
             btnLoadNew.Enabled = true;
             btnLoadOld.Enabled = true;
             btnLoadNew.Text = "Load new file";
@@ -296,6 +359,50 @@ namespace EaseEnrollCompare {
             lblOldFile.Text = "Load old file";
             dgvOutPut.DataSource = null;
             dgvOutPut.Rows.Clear();
+        }
+
+        private void cbNewTerm_CheckedChanged(object sender, EventArgs e) {
+
+        }
+
+        private void cbActiveOld_CheckedChanged(object sender, EventArgs e) {
+            if (!cbActiveOld.Checked) {//fires before changing, logic based on pre-click
+                this.cbOldTerm.Checked = true;
+                this.cbOldTerm.Enabled = true;
+                this.cbOldTerm.Checked = true;
+                this.cbOldTerm.Enabled = true;
+                this.cbOldWaived.Checked = true;
+                this.cbOldWaived.Enabled = true;
+                this.dpActiveDate.Enabled = false;
+            } else {
+                this.cbOldTerm.Checked = false;
+                this.cbOldTerm.Enabled = false;
+                this.cbOldTerm.Checked = false;
+                this.cbOldTerm.Enabled = false;
+                this.cbOldWaived.Checked = false;
+                this.cbOldWaived.Enabled = false;
+                this.dpActiveDate.Enabled = true;
+            }
+        }
+
+        private void cbActiveNew_CheckedChanged(object sender, EventArgs e) {
+            if (!cbActiveNew.Checked) {//fires before changing, logic based on pre-click
+                this.cbNewTerm.Checked = true;
+                this.cbNewTerm.Enabled = true;
+                this.cbNewTerm.Checked = true;
+                this.cbNewTerm.Enabled = true;
+                this.cbNewWaived.Checked = true;
+                this.cbNewWaived.Enabled = true;
+                this.dpActiveDate.Enabled = false;
+            } else {
+                this.cbNewTerm.Checked = false;
+                this.cbNewTerm.Enabled = false;
+                this.cbNewTerm.Checked = false;
+                this.cbNewTerm.Enabled = false;
+                this.cbNewWaived.Checked = false;
+                this.cbNewWaived.Enabled = false;
+                this.dpActiveDate.Enabled = true;
+            }
         }
     }
 }
