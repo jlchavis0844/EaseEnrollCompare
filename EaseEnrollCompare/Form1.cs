@@ -249,13 +249,25 @@ namespace EaseEnrollCompare {
                 //format.EOL = "\r";
                 format.TextQualifier = '\"';
 
-                //if (File.Exists(OutputFile)) {
-                //    File.Delete(OutputFile);
-                //}
+                if (File.Exists(OutputFile)) {
+                    File.Delete(OutputFile);
+                }
 
                 using (ExcelPackage package = new ExcelPackage(new FileInfo(OutputFile))) {
                     ExcelWorksheet ws = package.Workbook.Worksheets.Add("Changes");
                     ws.Cells["A1"].LoadFromText(new FileInfo(tempFile), format, OfficeOpenXml.Table.TableStyles.None, true);
+
+                    int totalRows = ws.Dimension.End.Row;
+                    int totalCols = ws.Dimension.End.Column;
+                    var range = ws.Cells[1, 1, 1, totalCols];
+                    
+                    for (int i = 1; i <= totalCols; i++) {
+                        if (range[1, i].Address != "" && range[1, i].Value != null && range[1, i].Value.ToString().Contains("Date"))
+                            ws.Column(i).Style.Numberformat.Format = "mm/dd/yyyy";
+
+                    }
+
+
                     package.Save();
                 }
 
@@ -264,6 +276,7 @@ namespace EaseEnrollCompare {
                 }
 
                 MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
+                System.Diagnostics.Process.Start(OutputFile);
 
             } catch(Exception exc) {
                 MessageBox.Show("Could not write file:" + OutputFile + "\n" + exc.Message, "Write Error", MessageBoxButtons.OK);
@@ -291,6 +304,10 @@ namespace EaseEnrollCompare {
                     if(DateTime.Parse(row.EffectiveDate)<= dpActiveDate.Value) {
                         return true;
                     }
+                } else {
+                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDate.Value) {
+                        return true;
+                    }
                 }
             }
 
@@ -314,6 +331,10 @@ namespace EaseEnrollCompare {
                     return true;
                 } else if (row.ElectionStatus == "Terminated") {
                     if (DateTime.Parse(row.EffectiveDate) <= dpActiveDate.Value) {
+                        return true;
+                    }
+                } else {
+                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDate.Value) {
                         return true;
                     }
                 }

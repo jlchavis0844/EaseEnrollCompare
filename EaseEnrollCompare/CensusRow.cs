@@ -94,7 +94,7 @@ public class CensusRow {
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    public string CalPERS_ID { get; set; }
+    //public string CalPERS_ID { get; set; }
     public string EnrolledBy { get; set; }
     public string NewBusiness { get; set; }
     public string VSPCode { get; set; }
@@ -221,7 +221,7 @@ public class CensusRow {
             this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
             this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
             this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
-            this.ESignDate.Trim() + " | " + this.CalPERS_ID.Trim() + " | " + Changes.Trim();
+            this.ESignDate.Trim() + " | " + Changes.Trim();
 
         return retStr.Replace("  ", " ").Trim();
     }
@@ -321,7 +321,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
         this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
         this.Map(m => m.ESignDate).Name("E-Sign Date").ToString().Trim();
-        this.Map(m => m.CalPERS_ID).Name("CalPERS ID").ToString().Trim();
+        //this.Map(m => m.CalPERS_ID).Name("CalPERS ID").ToString().Trim();
         this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
         this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();
         this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
