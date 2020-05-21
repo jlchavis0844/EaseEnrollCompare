@@ -38,6 +38,8 @@
             this.cbActiveOld = new System.Windows.Forms.CheckBox();
             this.cbActiveNew = new System.Windows.Forms.CheckBox();
             this.dpActiveDate = new System.Windows.Forms.DateTimePicker();
+            this.cbExcel = new System.Windows.Forms.CheckBox();
+            this.cbCSV = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,7 +83,7 @@
             // 
             // btnCompare
             // 
-            this.btnCompare.Location = new System.Drawing.Point(31, 155);
+            this.btnCompare.Location = new System.Drawing.Point(31, 174);
             this.btnCompare.Name = "btnCompare";
             this.btnCompare.Size = new System.Drawing.Size(164, 23);
             this.btnCompare.TabIndex = 4;
@@ -91,7 +93,7 @@
             // 
             // btnOutput
             // 
-            this.btnOutput.Location = new System.Drawing.Point(219, 155);
+            this.btnOutput.Location = new System.Drawing.Point(219, 174);
             this.btnOutput.Name = "btnOutput";
             this.btnOutput.Size = new System.Drawing.Size(164, 23);
             this.btnOutput.TabIndex = 5;
@@ -103,6 +105,9 @@
             // 
             this.dgvOutPut.AllowUserToAddRows = false;
             this.dgvOutPut.AllowUserToDeleteRows = false;
+            this.dgvOutPut.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvOutPut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvOutPut.Location = new System.Drawing.Point(13, 204);
             this.dgvOutPut.Name = "dgvOutPut";
@@ -162,7 +167,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(411, 155);
+            this.btnReset.Location = new System.Drawing.Point(411, 174);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(75, 23);
             this.btnReset.TabIndex = 11;
@@ -202,11 +207,35 @@
             this.dpActiveDate.Size = new System.Drawing.Size(109, 20);
             this.dpActiveDate.TabIndex = 14;
             // 
+            // cbExcel
+            // 
+            this.cbExcel.AutoSize = true;
+            this.cbExcel.Checked = true;
+            this.cbExcel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExcel.Location = new System.Drawing.Point(31, 144);
+            this.cbExcel.Name = "cbExcel";
+            this.cbExcel.Size = new System.Drawing.Size(87, 17);
+            this.cbExcel.TabIndex = 15;
+            this.cbExcel.Text = "Output Excel";
+            this.cbExcel.UseVisualStyleBackColor = true;
+            // 
+            // cbCSV
+            // 
+            this.cbCSV.AutoSize = true;
+            this.cbCSV.Location = new System.Drawing.Point(173, 144);
+            this.cbCSV.Name = "cbCSV";
+            this.cbCSV.Size = new System.Drawing.Size(82, 17);
+            this.cbCSV.TabIndex = 16;
+            this.cbCSV.Text = "Output CSV";
+            this.cbCSV.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.cbCSV);
+            this.Controls.Add(this.cbExcel);
             this.Controls.Add(this.dpActiveDate);
             this.Controls.Add(this.cbActiveNew);
             this.Controls.Add(this.cbActiveOld);
@@ -247,6 +276,8 @@
         private System.Windows.Forms.CheckBox cbActiveOld;
         private System.Windows.Forms.CheckBox cbActiveNew;
         private System.Windows.Forms.DateTimePicker dpActiveDate;
+        private System.Windows.Forms.CheckBox cbExcel;
+        private System.Windows.Forms.CheckBox cbCSV;
     }
 }
 

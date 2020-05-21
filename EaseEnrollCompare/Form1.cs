@@ -243,41 +243,63 @@ namespace EaseEnrollCompare {
                     }
                 }
 
-                
-                var format = new ExcelTextFormat();
-                format.Delimiter = ',';
-                //format.EOL = "\r";
-                format.TextQualifier = '\"';
+                if (cbExcel.Checked) {
 
-                if (File.Exists(OutputFile)) {
-                    File.Delete(OutputFile);
-                }
+                    var format = new ExcelTextFormat();
+                    format.Delimiter = ',';
+                    //format.EOL = "\r";
+                    format.TextQualifier = '\"';
 
-                using (ExcelPackage package = new ExcelPackage(new FileInfo(OutputFile))) {
-                    ExcelWorksheet ws = package.Workbook.Worksheets.Add("Changes");
-                    ws.Cells["A1"].LoadFromText(new FileInfo(tempFile), format, OfficeOpenXml.Table.TableStyles.None, true);
-
-                    int totalRows = ws.Dimension.End.Row;
-                    int totalCols = ws.Dimension.End.Column;
-                    var range = ws.Cells[1, 1, 1, totalCols];
-                    
-                    for (int i = 1; i <= totalCols; i++) {
-                        if (range[1, i].Address != "" && range[1, i].Value != null && range[1, i].Value.ToString().Contains("Date"))
-                            ws.Column(i).Style.Numberformat.Format = "mm/dd/yyyy";
-
+                    if (File.Exists(OutputFile)) {
+                        File.Delete(OutputFile);
                     }
 
+                    using (ExcelPackage package = new ExcelPackage(new FileInfo(OutputFile))) {
+                        ExcelWorksheet ws = package.Workbook.Worksheets.Add("Changes");
+                        ws.Cells["A1"].LoadFromText(new FileInfo(tempFile), format, OfficeOpenXml.Table.TableStyles.None, true);
 
-                    package.Save();
+                        int totalRows = ws.Dimension.End.Row;
+                        int totalCols = ws.Dimension.End.Column;
+                        var range = ws.Cells[1, 1, 1, totalCols];
+
+                        for (int i = 1; i <= totalCols; i++) {
+                            if (range[1, i].Address != "" && range[1, i].Value != null && range[1, i].Value.ToString().Contains("Date"))
+                                ws.Column(i).Style.Numberformat.Format = "mm/dd/yyyy";
+                        }
+
+                        ws = package.Workbook.Worksheets.First();
+
+                        int lastRow = ws.Dimension.End.Row;
+                        string lastLoc = ws.Cells["B" + lastRow].ToString();
+
+                        while (ws.Cells[lastLoc].Value == null || string.IsNullOrWhiteSpace(ws.Cells[lastLoc].Value.ToString())) { 
+                            ws.DeleteRow(lastRow);
+                            ws = package.Workbook.Worksheets.First();
+                            lastRow = ws.Dimension.End.Row;
+                            lastLoc = ws.Cells["B" + lastRow].ToString();
+                        }
+
+                        package.Save();
+                    }
+
+                    //MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
+                    System.Diagnostics.Process.Start(OutputFile);
                 }
 
-                if (File.Exists(tempFile)) {
-                    File.Delete(tempFile);
+                if (cbCSV.Checked) {
+                    OutputFile = OutputFile.Replace(".xlsx", ".csv");
+
+                    if (File.Exists(OutputFile))
+                        File.Delete(OutputFile);
+
+                    File.Move(tempFile, OutputFile);
+                    //MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
+                    System.Diagnostics.Process.Start(OutputFile);
+                } else {
+                    if (File.Exists(tempFile)) {
+                        File.Delete(tempFile);
+                    }
                 }
-
-                MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
-                System.Diagnostics.Process.Start(OutputFile);
-
             } catch(Exception exc) {
                 MessageBox.Show("Could not write file:" + OutputFile + "\n" + exc.Message, "Write Error", MessageBoxButtons.OK);
 
@@ -387,41 +409,57 @@ namespace EaseEnrollCompare {
         }
 
         private void cbActiveOld_CheckedChanged(object sender, EventArgs e) {
+            cbActiveNew.CheckedChanged -= new System.EventHandler(this.cbActiveNew_CheckedChanged);
+            cbActiveNew.Checked = !cbActiveNew.Checked;
+            cbActiveNew.CheckedChanged += new System.EventHandler(this.cbActiveNew_CheckedChanged);
+            
             if (!cbActiveOld.Checked) {//fires before changing, logic based on pre-click
-                this.cbOldTerm.Checked = true;
-                this.cbOldTerm.Enabled = true;
                 this.cbOldTerm.Checked = true;
                 this.cbOldTerm.Enabled = true;
                 this.cbOldWaived.Checked = true;
                 this.cbOldWaived.Enabled = true;
-                this.dpActiveDate.Enabled = false;
-            } else {
-                this.cbOldTerm.Checked = false;
-                this.cbOldTerm.Enabled = false;
-                this.cbOldTerm.Checked = false;
-                this.cbOldTerm.Enabled = false;
-                this.cbOldWaived.Checked = false;
-                this.cbOldWaived.Enabled = false;
-                this.dpActiveDate.Enabled = true;
-            }
-        }
-
-        private void cbActiveNew_CheckedChanged(object sender, EventArgs e) {
-            if (!cbActiveNew.Checked) {//fires before changing, logic based on pre-click
-                this.cbNewTerm.Checked = true;
-                this.cbNewTerm.Enabled = true;
                 this.cbNewTerm.Checked = true;
                 this.cbNewTerm.Enabled = true;
                 this.cbNewWaived.Checked = true;
                 this.cbNewWaived.Enabled = true;
                 this.dpActiveDate.Enabled = false;
             } else {
-                this.cbNewTerm.Checked = false;
-                this.cbNewTerm.Enabled = false;
+                this.cbOldTerm.Checked = false;
+                this.cbOldTerm.Enabled = false;
+                this.cbOldWaived.Checked = false;
+                this.cbOldWaived.Enabled = false;
                 this.cbNewTerm.Checked = false;
                 this.cbNewTerm.Enabled = false;
                 this.cbNewWaived.Checked = false;
                 this.cbNewWaived.Enabled = false;
+                this.dpActiveDate.Enabled = true;
+            }
+        }
+
+        private void cbActiveNew_CheckedChanged(object sender, EventArgs e) {
+            cbActiveOld.CheckedChanged -= new System.EventHandler(this.cbActiveOld_CheckedChanged);
+            cbActiveOld.Checked = !cbActiveOld.Checked;
+            cbActiveOld.CheckedChanged += new System.EventHandler(this.cbActiveOld_CheckedChanged);
+
+            if (!cbActiveNew.Checked) {//fires before changing, logic based on pre-click
+                this.cbNewTerm.Checked = true;
+                this.cbNewTerm.Enabled = true;
+                this.cbNewWaived.Checked = true;
+                this.cbNewWaived.Enabled = true;
+                this.cbOldTerm.Checked = true;
+                this.cbOldTerm.Enabled = true;
+                this.cbOldWaived.Checked = true;
+                this.cbOldWaived.Enabled = true;
+                this.dpActiveDate.Enabled = false;
+            } else {
+                this.cbNewTerm.Checked = false;
+                this.cbNewTerm.Enabled = false;
+                this.cbNewWaived.Checked = false;
+                this.cbNewWaived.Enabled = false;
+                this.cbOldTerm.Checked = false;
+                this.cbOldTerm.Enabled = false;
+                this.cbOldWaived.Checked = false;
+                this.cbOldWaived.Enabled = false;
                 this.dpActiveDate.Enabled = true;
             }
         }
