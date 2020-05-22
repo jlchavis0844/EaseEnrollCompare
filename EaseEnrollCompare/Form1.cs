@@ -63,7 +63,9 @@ namespace EaseEnrollCompare {
                             csv.Configuration.RegisterClassMap<CensusRowClassMap>();
 
                             try {
-                                OriginalOldRecords = OldRecords = csv.GetRecords<CensusRow>().ToList();
+                                OriginalOldRecords = csv.GetRecords<CensusRow>().ToList();
+                                OldRecords = new List<CensusRow>(OriginalOldRecords);
+
                                 int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
                                 Console.WriteLine(cnt + " lines removed");
                                 btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
@@ -104,7 +106,9 @@ namespace EaseEnrollCompare {
                             csv.Configuration.RegisterClassMap<CensusRowClassMap>();
 
                             try {
-                                OriginalNewRecords = NewRecords = csv.GetRecords<CensusRow>().ToList();
+                                OriginalNewRecords = csv.GetRecords<CensusRow>().ToList();
+                                NewRecords = new List<CensusRow>(OriginalNewRecords);
+
                                 int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
                                 Console.WriteLine(cnt + " lines removed");
                                 btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
@@ -156,6 +160,9 @@ namespace EaseEnrollCompare {
 
         private void btnCompare_Click(object sender, EventArgs e) {
             btnCompare.Enabled = false;
+            btnDropData.Enabled = true;
+            btnOutput.Enabled = true;
+
             NewRecords = (from rec in NewRecords
                          orderby rec.EID, rec.RelationshipCode, rec.FirstName
                          select rec).ToList();
@@ -172,6 +179,7 @@ namespace EaseEnrollCompare {
 
                 if(matches.Count == 0) {
                     rec.Changes = "DROP";
+                    rec.ElectionStatus = "DROP";
                     Drops.Add(rec);
                 } else if(matches.Count > 1){
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
@@ -190,6 +198,7 @@ namespace EaseEnrollCompare {
 
                 if (matches.Count == 0) {
                     rec.Changes = "ADD";
+                    rec.ElectionStatus = "ADD";
                     Adds.Add(rec);
                 } else if (matches.Count > 1) {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
@@ -462,6 +471,57 @@ namespace EaseEnrollCompare {
                 this.cbOldWaived.Enabled = false;
                 this.dpActiveDate.Enabled = true;
             }
+        }
+
+        private void btnDropData_Click(object sender, EventArgs e) {
+            List<CensusRow> newDrops = new List<CensusRow>();
+            foreach(var rec in Drops) {
+
+                var tempRec = OriginalNewRecords.Where(x =>
+                x.EID == rec.EID && x.FirstName == rec.FirstName &&
+                x.MiddleName == rec.MiddleName && x.LastName == rec.LastName &&
+                x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
+
+                if (tempRec == null) {
+                    MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
+                    continue;
+                }
+                tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, PLan Effective Start Date is used for plan start and effective date is for term date
+                tempRec.Changes = rec.Changes;
+                tempRec.ElectionStatus = rec.ElectionStatus;
+
+                newDrops.Add(tempRec);
+            }
+
+
+            var totalOut = NewRecords.Concat(newDrops);
+            string OutputFile = string.Empty;
+            using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
+                string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
+                fbd.Description = "Select the directory to output files to";
+                fbd.SelectedPath = defaultPath;
+                fbd.ShowNewFolderButton = true;
+
+                // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
+                DialogResult result = fbd.ShowDialog();
+                if (result == DialogResult.OK) {
+                    OutputFile = fbd.SelectedPath;
+                }
+            }
+
+            if (OutputFile == string.Empty)
+                return;
+
+            OutputFile = OutputFile + @"\DataIn_" +
+                DateTime.Now.ToString("MMddyyyy") + ".CSV";
+
+            using (TextWriter writer = new StreamWriter(OutputFile)) {
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
+                    csv.WriteRecords(totalOut);
+                }
+            }
+
+            System.Diagnostics.Process.Start(OutputFile);
         }
     }
 }

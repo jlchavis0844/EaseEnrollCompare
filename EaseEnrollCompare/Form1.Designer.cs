@@ -40,6 +40,7 @@
             this.dpActiveDate = new System.Windows.Forms.DateTimePicker();
             this.cbExcel = new System.Windows.Forms.CheckBox();
             this.cbCSV = new System.Windows.Forms.CheckBox();
+            this.btnDropData = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,11 +94,12 @@
             // 
             // btnOutput
             // 
+            this.btnOutput.Enabled = false;
             this.btnOutput.Location = new System.Drawing.Point(219, 174);
             this.btnOutput.Name = "btnOutput";
             this.btnOutput.Size = new System.Drawing.Size(164, 23);
             this.btnOutput.TabIndex = 5;
-            this.btnOutput.Text = "Output File";
+            this.btnOutput.Text = "Output Changes File";
             this.btnOutput.UseVisualStyleBackColor = true;
             this.btnOutput.Click += new System.EventHandler(this.btnOutput_Click);
             // 
@@ -167,7 +169,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(411, 174);
+            this.btnReset.Location = new System.Drawing.Point(713, 174);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(75, 23);
             this.btnReset.TabIndex = 11;
@@ -229,11 +231,23 @@
             this.cbCSV.Text = "Output CSV";
             this.cbCSV.UseVisualStyleBackColor = true;
             // 
+            // btnDropData
+            // 
+            this.btnDropData.Enabled = false;
+            this.btnDropData.Location = new System.Drawing.Point(410, 174);
+            this.btnDropData.Name = "btnDropData";
+            this.btnDropData.Size = new System.Drawing.Size(164, 23);
+            this.btnDropData.TabIndex = 17;
+            this.btnDropData.Text = "Output Drop Data";
+            this.btnDropData.UseVisualStyleBackColor = true;
+            this.btnDropData.Click += new System.EventHandler(this.btnDropData_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.btnDropData);
             this.Controls.Add(this.cbCSV);
             this.Controls.Add(this.cbExcel);
             this.Controls.Add(this.dpActiveDate);
@@ -278,6 +292,7 @@
         private System.Windows.Forms.DateTimePicker dpActiveDate;
         private System.Windows.Forms.CheckBox cbExcel;
         private System.Windows.Forms.CheckBox cbCSV;
+        private System.Windows.Forms.Button btnDropData;
     }
 }
 
