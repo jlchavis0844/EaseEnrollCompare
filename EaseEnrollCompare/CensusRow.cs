@@ -1,4 +1,8 @@
 ﻿using CsvHelper.Configuration;
+using OfficeOpenXml;
+using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
 
 public class CensusRow {
     public string Changes { get; set; }
@@ -221,7 +225,7 @@ public class CensusRow {
             this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
             this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
             this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
-            this.ESignDate.Trim() + " | " + Changes.Trim();
+            this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
 
         return retStr.Replace("  ", " ").Trim();
     }
@@ -321,12 +325,209 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
         this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
         this.Map(m => m.ESignDate).Name("E-Sign Date").ToString().Trim();
-        //this.Map(m => m.CalPERS_ID).Name("CalPERS ID").ToString().Trim();
+        //this.Map(m => m.CalPERSID).Name("CalPERS ID").ToString().Trim();
         this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
         this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();
         this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
 
         // Map(m => m.EnrolledBy).Name("Enrolled By");
         // Map(m => m.NewBusiness).Name("New Business");
+    }
+
+    public static void WriteHeader(ExcelWorksheet worksheet) {
+        if (worksheet.Cells[1, 1].Value != null)
+            worksheet.Cells[1, 1].Value = "Changes";
+        if (worksheet.Cells[1, 2].Value != null)
+            worksheet.Cells[1, 2].Value = "Company Name";
+        if (worksheet.Cells[1, 3].Value != null)
+            worksheet.Cells[1, 3].Value = "EID";
+        if (worksheet.Cells[1, 4].Value != null)
+            worksheet.Cells[1, 4].Value = "Location";
+        if (worksheet.Cells[1, 5].Value != null)
+            worksheet.Cells[1, 5].Value = "First Name";
+        if (worksheet.Cells[1, 6].Value != null)
+            worksheet.Cells[1, 6].Value = "Middle Name";
+        if (worksheet.Cells[1, 7].Value != null)
+            worksheet.Cells[1, 7].Value = "Last Name";
+        if (worksheet.Cells[1, 8].Value != null)
+            worksheet.Cells[1, 8].Value = "Relationship";
+        if (worksheet.Cells[1, 9].Value != null)
+            worksheet.Cells[1, 9].Value = "Relationship Code";
+        if (worksheet.Cells[1, 10].Value != null)
+            worksheet.Cells[1, 10].Value = "SSN";
+        if (worksheet.Cells[1, 11].Value != null)
+            worksheet.Cells[1, 11].Value = "Gender";
+        if (worksheet.Cells[1, 12].Value != null)
+            worksheet.Cells[1, 12].Value = "Birth Date";
+        if (worksheet.Cells[1, 13].Value != null)
+            worksheet.Cells[1, 13].Value = "Race";
+        if (worksheet.Cells[1, 14].Value != null)
+            worksheet.Cells[1, 14].Value = "Citizenship";
+        if (worksheet.Cells[1, 15].Value != null)
+            worksheet.Cells[1, 15].Value = "Address 1";
+        if (worksheet.Cells[1, 16].Value != null)
+            worksheet.Cells[1, 16].Value = "Address 2";
+        if (worksheet.Cells[1, 17].Value != null)
+            worksheet.Cells[1, 17].Value = "City";
+        if (worksheet.Cells[1, 18].Value != null)
+            worksheet.Cells[1, 18].Value = "State";
+        if (worksheet.Cells[1, 19].Value != null)
+            worksheet.Cells[1, 19].Value = "Zip";
+        if (worksheet.Cells[1, 20].Value != null)
+            worksheet.Cells[1, 20].Value = "County";
+        if (worksheet.Cells[1, 21].Value != null)
+            worksheet.Cells[1, 21].Value = "Country";
+        if (worksheet.Cells[1, 22].Value != null)
+            worksheet.Cells[1, 22].Value = "Personal Phone";
+        if (worksheet.Cells[1, 23].Value != null)
+            worksheet.Cells[1, 23].Value = "Work Phone";
+        if (worksheet.Cells[1, 24].Value != null)
+            worksheet.Cells[1, 24].Value = "Mobile Phone";
+        if (worksheet.Cells[1, 25].Value != null)
+            worksheet.Cells[1, 25].Value = "Email";
+        if (worksheet.Cells[1, 26].Value != null)
+            worksheet.Cells[1, 26].Value = "Personal Email";
+        if (worksheet.Cells[1, 27].Value != null)
+            worksheet.Cells[1, 27].Value = "Employee Type";
+        if (worksheet.Cells[1, 28].Value != null)
+            worksheet.Cells[1, 28].Value = "Employee Status";
+        if (worksheet.Cells[1, 29].Value != null)
+            worksheet.Cells[1, 29].Value = "Hire Date";
+        if (worksheet.Cells[1, 30].Value != null)
+            worksheet.Cells[1, 30].Value = "Termination Date";
+        if (worksheet.Cells[1, 31].Value != null)
+            worksheet.Cells[1, 31].Value = "Department";
+        if (worksheet.Cells[1, 32].Value != null)
+            worksheet.Cells[1, 32].Value = "Division";
+        if (worksheet.Cells[1, 33].Value != null)
+            worksheet.Cells[1, 33].Value = "Job Class";
+        if (worksheet.Cells[1, 34].Value != null)
+            worksheet.Cells[1, 34].Value = "Job Title";
+        if (worksheet.Cells[1, 35].Value != null)
+            worksheet.Cells[1, 35].Value = "Marital Status";
+        if (worksheet.Cells[1, 36].Value != null)
+            worksheet.Cells[1, 36].Value = "Marital Date";
+        if (worksheet.Cells[1, 37].Value != null)
+            worksheet.Cells[1, 37].Value = "Marital Location";
+        if (worksheet.Cells[1, 38].Value != null)
+            worksheet.Cells[1, 38].Value = "Student Status";
+        if (worksheet.Cells[1, 39].Value != null)
+            worksheet.Cells[1, 39].Value = "Scheduled Hours";
+        if (worksheet.Cells[1, 40].Value != null)
+            worksheet.Cells[1, 40].Value = "Sick Hours";
+        if (worksheet.Cells[1, 41].Value != null)
+            worksheet.Cells[1, 41].Value = "Personal Hours";
+        if (worksheet.Cells[1, 42].Value != null)
+            worksheet.Cells[1, 42].Value = "W2 Wages";
+        if (worksheet.Cells[1, 43].Value != null)
+            worksheet.Cells[1, 43].Value = "Compensation";
+        if (worksheet.Cells[1, 44].Value != null)
+            worksheet.Cells[1, 44].Value = "Compensation Type";
+        if (worksheet.Cells[1, 45].Value != null)
+            worksheet.Cells[1, 45].Value = "Pay Cycle";
+        if (worksheet.Cells[1, 46].Value != null)
+            worksheet.Cells[1, 46].Value = "Pay Periods";
+        if (worksheet.Cells[1, 47].Value != null)
+            worksheet.Cells[1, 47].Value = "Cost Factor";
+        if (worksheet.Cells[1, 48].Value != null)
+            worksheet.Cells[1, 48].Value = "Tobacco User";
+        if (worksheet.Cells[1, 49].Value != null)
+            worksheet.Cells[1, 49].Value = "Disabled";
+        if (worksheet.Cells[1, 50].Value != null)
+            worksheet.Cells[1, 50].Value = "Medicare A Date";
+        if (worksheet.Cells[1, 51].Value != null)
+            worksheet.Cells[1, 51].Value = "Medicare B Date";
+        if (worksheet.Cells[1, 52].Value != null)
+            worksheet.Cells[1, 52].Value = "Medicare C Date";
+        if (worksheet.Cells[1, 53].Value != null)
+            worksheet.Cells[1, 53].Value = "Medicare D Date";
+        if (worksheet.Cells[1, 54].Value != null)
+            worksheet.Cells[1, 54].Value = "Medical PCP Name";
+        if (worksheet.Cells[1, 55].Value != null)
+            worksheet.Cells[1, 55].Value = "Medical PCP ID";
+        if (worksheet.Cells[1, 56].Value != null)
+            worksheet.Cells[1, 56].Value = "Dental PCP Name";
+        if (worksheet.Cells[1, 57].Value != null)
+            worksheet.Cells[1, 57].Value = "Dental PCP ID";
+        if (worksheet.Cells[1, 58].Value != null)
+            worksheet.Cells[1, 58].Value = "IPA Number";
+        if (worksheet.Cells[1, 59].Value != null)
+            worksheet.Cells[1, 59].Value = "OBGYN";
+        if (worksheet.Cells[1, 60].Value != null)
+            worksheet.Cells[1, 60].Value = "Benefit Eligible Date";
+        if (worksheet.Cells[1, 61].Value != null)
+            worksheet.Cells[1, 61].Value = "Unlock Enrollment Date";
+        if (worksheet.Cells[1, 62].Value != null)
+            worksheet.Cells[1, 62].Value = "Original Effective Date Info";
+        if (worksheet.Cells[1, 63].Value != null)
+            worksheet.Cells[1, 63].Value = "Subscriber Key";
+        if (worksheet.Cells[1, 64].Value != null)
+            worksheet.Cells[1, 64].Value = "Plan Type";
+        if (worksheet.Cells[1, 65].Value != null)
+            worksheet.Cells[1, 65].Value = "Plan Effective Start Date";
+        if (worksheet.Cells[1, 66].Value != null)
+            worksheet.Cells[1, 66].Value = "Plan Effective End Date";
+        if (worksheet.Cells[1, 67].Value != null)
+            worksheet.Cells[1, 67].Value = "Plan Admin Name";
+        if (worksheet.Cells[1, 68].Value != null)
+            worksheet.Cells[1, 68].Value = "Plan Display Name";
+        if (worksheet.Cells[1, 69].Value != null)
+            worksheet.Cells[1, 69].Value = "Plan Import ID";
+        if (worksheet.Cells[1, 70].Value != null)
+            worksheet.Cells[1, 70].Value = "Effective Date";
+        if (worksheet.Cells[1, 71].Value != null)
+            worksheet.Cells[1, 71].Value = "Activity Date";
+        if (worksheet.Cells[1, 72].Value != null)
+            worksheet.Cells[1, 72].Value = "Coverage Details";
+        if (worksheet.Cells[1, 73].Value != null)
+            worksheet.Cells[1, 73].Value = "Election Status";
+        if (worksheet.Cells[1, 74].Value != null)
+            worksheet.Cells[1, 74].Value = "Processed Date";
+        if (worksheet.Cells[1, 75].Value != null)
+            worksheet.Cells[1, 75].Value = "Rider Codes";
+        if (worksheet.Cells[1, 76].Value != null)
+            worksheet.Cells[1, 76].Value = "Action";
+        if (worksheet.Cells[1, 77].Value != null)
+            worksheet.Cells[1, 77].Value = "Waive Reason";
+        if (worksheet.Cells[1, 78].Value != null)
+            worksheet.Cells[1, 78].Value = "Policy Number";
+        if (worksheet.Cells[1, 79].Value != null)
+            worksheet.Cells[1, 79].Value = "Subgroup Number";
+        if (worksheet.Cells[1, 80].Value != null)
+            worksheet.Cells[1, 80].Value = "Age Determination";
+        if (worksheet.Cells[1, 81].Value != null)
+            worksheet.Cells[1, 81].Value = "Carrier";
+        if (worksheet.Cells[1, 82].Value != null)
+            worksheet.Cells[1, 82].Value = "Total Rate";
+        if (worksheet.Cells[1, 83].Value != null)
+            worksheet.Cells[1, 83].Value = "Employee Rate";
+        if (worksheet.Cells[1, 84].Value != null)
+            worksheet.Cells[1, 84].Value = "Spouse Rate";
+        if (worksheet.Cells[1, 85].Value != null)
+            worksheet.Cells[1, 85].Value = "Children Rate";
+        if (worksheet.Cells[1, 86].Value != null)
+            worksheet.Cells[1, 86].Value = "Employee Contribution";
+        if (worksheet.Cells[1, 87].Value != null)
+            worksheet.Cells[1, 87].Value = "Employee Pre-Tax Cost";
+        if (worksheet.Cells[1, 88].Value != null)
+            worksheet.Cells[1, 88].Value = "Employee Post-Tax Cost";
+        if (worksheet.Cells[1, 89].Value != null)
+            worksheet.Cells[1, 89].Value = "Employee Cost Per Deduction Period";
+        if (worksheet.Cells[1, 90].Value != null)
+            worksheet.Cells[1, 90].Value = "Plan Deduction Cycle";
+        if (worksheet.Cells[1, 91].Value != null)
+            worksheet.Cells[1, 91].Value = "Last Modified Date";
+        if (worksheet.Cells[1, 92].Value != null)
+            worksheet.Cells[1, 92].Value = "Last Modified By";
+        if (worksheet.Cells[1, 93].Value != null)
+            worksheet.Cells[1, 93].Value = "E-Sign Date";
+        if (worksheet.Cells[1, 94].Value != null)
+            worksheet.Cells[1, 94].Value = "CalPERS ID";
+        if (worksheet.Cells[1, 95].Value != null)
+            worksheet.Cells[1, 95].Value = "Enrolled By";
+        if (worksheet.Cells[1, 96].Value != null)
+            worksheet.Cells[1, 96].Value = "New Business";
+        if (worksheet.Cells[1, 97].Value != null)
+            worksheet.Cells[1, 97].Value = "VSP Code";
     }
 }
