@@ -34,7 +34,7 @@ namespace EaseEnrollCompare {
         public Form1() {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             InitializeComponent();
-            dpActiveDate.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            dpActiveDateOld.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
@@ -192,6 +192,8 @@ namespace EaseEnrollCompare {
             }
 
             foreach (var rec in NewRecords) {
+                if (rec.LastName == "Knight")
+                    Console.WriteLine("STOP");
                 List<CensusRow> matches = OldRecords.Where(x =>
                 x.EID == rec.EID && x.FirstName == rec.FirstName &&
                 x.MiddleName == rec.MiddleName && x.LastName == rec.LastName &&
@@ -333,11 +335,11 @@ namespace EaseEnrollCompare {
                 if (row.ElectionStatus == "Waived") {
                     return true;
                 } else if (row.ElectionStatus == "Terminated") {
-                    if (DateTime.Parse(row.EffectiveDate) <= dpActiveDate.Value) {
+                    if (DateTime.Parse(row.EffectiveDate) <= dpActiveDateOld.Value) {
                         return true;
                     }
                 } else {
-                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDate.Value) {
+                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDateOld.Value) {
                         return true;
                     }
                 }
@@ -362,11 +364,11 @@ namespace EaseEnrollCompare {
                 if (row.ElectionStatus == "Waived") {
                     return true;
                 } else if (row.ElectionStatus == "Terminated") {
-                    if (DateTime.Parse(row.EffectiveDate) <= dpActiveDate.Value) {
+                    if (DateTime.Parse(row.EffectiveDate) <= dpActiveDateNew.Value) {
                         return true;
                     }
                 } else {
-                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDate.Value) {
+                    if (DateTime.Parse(row.EffectiveDate) > dpActiveDateNew.Value) {
                         return true;
                     }
                 }
@@ -398,7 +400,8 @@ namespace EaseEnrollCompare {
             Changes = new List<CensusRow>();
             output = new List<CensusRow>();
 
-            dpActiveDate.Enabled = false;
+            dpActiveDateOld.Enabled = false;
+            dpActiveDateNew.Enabled = false;
             cbActiveNew.Checked = false;
             cbActiveOld.Checked = false;
             btnCompare.Enabled = true;
@@ -432,7 +435,8 @@ namespace EaseEnrollCompare {
                 this.cbNewTerm.Enabled = true;
                 this.cbNewWaived.Checked = true;
                 this.cbNewWaived.Enabled = true;
-                this.dpActiveDate.Enabled = false;
+                this.dpActiveDateOld.Enabled = false;
+                this.dpActiveDateNew.Enabled = false;
             } else {
                 this.cbOldTerm.Checked = false;
                 this.cbOldTerm.Enabled = false;
@@ -442,7 +446,8 @@ namespace EaseEnrollCompare {
                 this.cbNewTerm.Enabled = false;
                 this.cbNewWaived.Checked = false;
                 this.cbNewWaived.Enabled = false;
-                this.dpActiveDate.Enabled = true;
+                this.dpActiveDateOld.Enabled = true;
+                this.dpActiveDateNew.Enabled = true;
             }
         }
 
@@ -460,7 +465,8 @@ namespace EaseEnrollCompare {
                 this.cbOldTerm.Enabled = true;
                 this.cbOldWaived.Checked = true;
                 this.cbOldWaived.Enabled = true;
-                this.dpActiveDate.Enabled = false;
+                this.dpActiveDateOld.Enabled = false;
+                this.dpActiveDateNew.Enabled = false;
             } else {
                 this.cbNewTerm.Checked = false;
                 this.cbNewTerm.Enabled = false;
@@ -470,7 +476,8 @@ namespace EaseEnrollCompare {
                 this.cbOldTerm.Enabled = false;
                 this.cbOldWaived.Checked = false;
                 this.cbOldWaived.Enabled = false;
-                this.dpActiveDate.Enabled = true;
+                this.dpActiveDateOld.Enabled = true;
+                this.dpActiveDateNew.Enabled = true;
             }
         }
 

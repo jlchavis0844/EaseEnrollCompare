@@ -37,10 +37,11 @@
             this.btnReset = new System.Windows.Forms.Button();
             this.cbActiveOld = new System.Windows.Forms.CheckBox();
             this.cbActiveNew = new System.Windows.Forms.CheckBox();
-            this.dpActiveDate = new System.Windows.Forms.DateTimePicker();
+            this.dpActiveDateOld = new System.Windows.Forms.DateTimePicker();
             this.cbExcel = new System.Windows.Forms.CheckBox();
             this.cbCSV = new System.Windows.Forms.CheckBox();
             this.btnDropData = new System.Windows.Forms.Button();
+            this.dpActiveDateNew = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -199,15 +200,15 @@
             this.cbActiveNew.UseVisualStyleBackColor = true;
             this.cbActiveNew.CheckedChanged += new System.EventHandler(this.cbActiveNew_CheckedChanged);
             // 
-            // dpActiveDate
+            // dpActiveDateOld
             // 
-            this.dpActiveDate.Enabled = false;
-            this.dpActiveDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dpActiveDate.Location = new System.Drawing.Point(453, 12);
-            this.dpActiveDate.MinDate = new System.DateTime(2019, 1, 1, 0, 0, 0, 0);
-            this.dpActiveDate.Name = "dpActiveDate";
-            this.dpActiveDate.Size = new System.Drawing.Size(109, 20);
-            this.dpActiveDate.TabIndex = 14;
+            this.dpActiveDateOld.Enabled = false;
+            this.dpActiveDateOld.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dpActiveDateOld.Location = new System.Drawing.Point(452, 14);
+            this.dpActiveDateOld.MinDate = new System.DateTime(2019, 1, 1, 0, 0, 0, 0);
+            this.dpActiveDateOld.Name = "dpActiveDateOld";
+            this.dpActiveDateOld.Size = new System.Drawing.Size(109, 20);
+            this.dpActiveDateOld.TabIndex = 14;
             // 
             // cbExcel
             // 
@@ -242,15 +243,26 @@
             this.btnDropData.UseVisualStyleBackColor = true;
             this.btnDropData.Click += new System.EventHandler(this.btnDropData_Click);
             // 
+            // dpActiveDateNew
+            // 
+            this.dpActiveDateNew.Enabled = false;
+            this.dpActiveDateNew.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dpActiveDateNew.Location = new System.Drawing.Point(452, 83);
+            this.dpActiveDateNew.MinDate = new System.DateTime(2019, 1, 1, 0, 0, 0, 0);
+            this.dpActiveDateNew.Name = "dpActiveDateNew";
+            this.dpActiveDateNew.Size = new System.Drawing.Size(109, 20);
+            this.dpActiveDateNew.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.dpActiveDateNew);
             this.Controls.Add(this.btnDropData);
             this.Controls.Add(this.cbCSV);
             this.Controls.Add(this.cbExcel);
-            this.Controls.Add(this.dpActiveDate);
+            this.Controls.Add(this.dpActiveDateOld);
             this.Controls.Add(this.cbActiveNew);
             this.Controls.Add(this.cbActiveOld);
             this.Controls.Add(this.btnReset);
@@ -289,10 +301,11 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.CheckBox cbActiveOld;
         private System.Windows.Forms.CheckBox cbActiveNew;
-        private System.Windows.Forms.DateTimePicker dpActiveDate;
+        private System.Windows.Forms.DateTimePicker dpActiveDateOld;
         private System.Windows.Forms.CheckBox cbExcel;
         private System.Windows.Forms.CheckBox cbCSV;
         private System.Windows.Forms.Button btnDropData;
+        private System.Windows.Forms.DateTimePicker dpActiveDateNew;
     }
 }
 
