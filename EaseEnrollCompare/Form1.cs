@@ -30,6 +30,7 @@ namespace EaseEnrollCompare {
         public static List<CensusRow> Adds = new List<CensusRow>();
         public static List<CensusRow> Changes = new List<CensusRow>();
         public static List<CensusRow> output = new List<CensusRow>();
+        public static List<string> MissingTermEIDs = new List<string>();
 
         public Form1() {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
@@ -207,9 +208,6 @@ namespace EaseEnrollCompare {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
                 }
             }
-            //PrintList(Adds);
-            //PrintList(Drops);
-            //PrintList(Changes);
 
             output.AddRange(Adds);
             output.AddRange(Drops);
@@ -314,9 +312,7 @@ namespace EaseEnrollCompare {
                 }
             } catch (Exception exc) {
                 MessageBox.Show("Could not write file:" + OutputFile + "\n" + exc.Message, "Write Error", MessageBoxButtons.OK);
-
             }
-
         }
 
         private bool ShouldBeRemovedOld(CensusRow row) {
@@ -344,7 +340,6 @@ namespace EaseEnrollCompare {
                     }
                 }
             }
-
             return false;
         }
 
@@ -491,10 +486,14 @@ namespace EaseEnrollCompare {
                 x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
 
                 if (tempRec == null) {
-                    MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
-                    continue;
+
+                    if (!MissingTermEIDs.Contains(rec.EID)) {
+                        MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
+                        MissingTermEIDs.Add(rec.EID);
+                        continue;
+                    }
                 }
-                tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, PLan Effective Start Date is used for plan start and effective date is for term date
+                tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, Plan Effective Start Date is used for plan start and effective date is for term date
                 tempRec.Changes = rec.Changes;
                 tempRec.ElectionStatus = rec.ElectionStatus;
 
@@ -547,6 +546,11 @@ namespace EaseEnrollCompare {
         }
 
         public static void RenameHeaders(DataTable dt) {
+
+            for(int i = 0; i < dt.Columns.Count; i++) {//rename to temp to avoid duplicating col names
+                dt.Columns[i].ColumnName = "Column" + i;
+            }
+
             dt.Columns[0].ColumnName = "Changes";
             dt.Columns[1].ColumnName = "Company Name";
             dt.Columns[2].ColumnName = "EID";
@@ -589,35 +593,35 @@ namespace EaseEnrollCompare {
             dt.Columns[39].ColumnName = "Sick Hours";
             dt.Columns[40].ColumnName = "Personal Hours";
             dt.Columns[41].ColumnName = "W2 Wages";
-            dt.Columns[42].ColumnName = "Compensation";
-            dt.Columns[43].ColumnName = "Compensation Type";
-            dt.Columns[44].ColumnName = "Pay Cycle";
-            dt.Columns[45].ColumnName = "Pay Periods";
-            dt.Columns[46].ColumnName = "Cost Factor";
-            dt.Columns[47].ColumnName = "Tobacco User";
-            dt.Columns[48].ColumnName = "Disabled";
-            dt.Columns[49].ColumnName = "Medicare A Date";
-            dt.Columns[50].ColumnName = "Medicare B Date";
-            dt.Columns[51].ColumnName = "Medicare C Date";
-            dt.Columns[52].ColumnName = "Medicare D Date";
-            dt.Columns[53].ColumnName = "Medical PCP Name";
-            dt.Columns[54].ColumnName = "Medical PCP ID";
-            dt.Columns[55].ColumnName = "Dental PCP Name";
-            dt.Columns[56].ColumnName = "Dental PCP ID";
-            dt.Columns[57].ColumnName = "IPA Number";
-            dt.Columns[58].ColumnName = "OBGYN";
-            dt.Columns[59].ColumnName = "Benefit Eligible Date";
-            dt.Columns[60].ColumnName = "Unlock Enrollment Date";
-            dt.Columns[61].ColumnName = "Original Effective Date Info";
-            dt.Columns[62].ColumnName = "Subscriber Key";
-            dt.Columns[63].ColumnName = "Plan Type";
-            dt.Columns[64].ColumnName = "Plan Effective Start Date";
-            dt.Columns[65].ColumnName = "Plan Effective End Date";
-            dt.Columns[66].ColumnName = "Plan Admin Name";
-            dt.Columns[67].ColumnName = "Plan Display Name";
-            dt.Columns[68].ColumnName = "Plan Import ID";
-            dt.Columns[69].ColumnName = "Effective Date";
-            dt.Columns[70].ColumnName = "Activity Date";
+            dt.Columns[42].ColumnName = "Pay Cycle";
+            dt.Columns[43].ColumnName = "Pay Periods";
+            dt.Columns[44].ColumnName = "Cost Factor";
+            dt.Columns[45].ColumnName = "Tobacco User";
+            dt.Columns[46].ColumnName = "Disabled";
+            dt.Columns[47].ColumnName = "Medicare A Date";
+            dt.Columns[48].ColumnName = "Medicare B Date";
+            dt.Columns[49].ColumnName = "Medicare C Date";
+            dt.Columns[50].ColumnName = "Medicare D Date";
+            dt.Columns[51].ColumnName = "Medical PCP Name";
+            dt.Columns[52].ColumnName = "Medical PCP ID";
+            dt.Columns[53].ColumnName = "Dental PCP Name";
+            dt.Columns[54].ColumnName = "Dental PCP ID";
+            dt.Columns[55].ColumnName = "IPA Number";
+            dt.Columns[56].ColumnName = "OBGYN";
+            dt.Columns[57].ColumnName = "Benefit Eligible Date";
+            dt.Columns[58].ColumnName = "Unlock Enrollment Date";
+            dt.Columns[59].ColumnName = "Original Effective Date Info";
+            dt.Columns[60].ColumnName = "Subscriber Key";
+            dt.Columns[61].ColumnName = "Plan Type";
+            dt.Columns[62].ColumnName = "Plan Effective Start Date";
+            dt.Columns[63].ColumnName = "Plan Effective End Date";
+            dt.Columns[64].ColumnName = "Plan Admin Name";
+            dt.Columns[65].ColumnName = "Plan Display Name";
+            dt.Columns[66].ColumnName = "Plan Import ID";
+            dt.Columns[67].ColumnName = "Effective Date";
+            dt.Columns[68].ColumnName = "Activity Date";
+            dt.Columns[69].ColumnName = "Benefit Compensation Amount";
+            dt.Columns[70].ColumnName = "Benefit Compensation Type";
             dt.Columns[71].ColumnName = "Coverage Details";
             dt.Columns[72].ColumnName = "Election Status";
             dt.Columns[73].ColumnName = "Processed Date";
