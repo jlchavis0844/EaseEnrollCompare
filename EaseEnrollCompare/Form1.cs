@@ -501,6 +501,8 @@ namespace EaseEnrollCompare {
             }
 
 
+            
+
             var totalOut = NewRecords.Concat(newDrops);
             totalOut = totalOut.OrderBy(r => r.EID).ThenBy(r => r.RelationshipCode).ThenBy(r => r.FirstName).ToList();
 
@@ -548,7 +550,12 @@ namespace EaseEnrollCompare {
         public static void RenameHeaders(DataTable dt) {
 
             for(int i = 0; i < dt.Columns.Count; i++) {//rename to temp to avoid duplicating col names
+                //Console.WriteLine(i + "\t" + dt.Columns[i].ColumnName);
                 dt.Columns[i].ColumnName = "Column" + i;
+            }
+
+            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++){
+                Console.WriteLine(dt.Rows[1].ItemArray[i]);
             }
 
             dt.Columns[0].ColumnName = "Changes";
@@ -647,6 +654,12 @@ namespace EaseEnrollCompare {
             dt.Columns[93].ColumnName = "Enrolled By";
             dt.Columns[94].ColumnName = "New Business";
             dt.Columns[95].ColumnName = "VSP Code";
+
+            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
+                Console.WriteLine(dt.Columns[i].ColumnName + "\t" + dt.Rows[0].ItemArray[i]);
+            }
+
+            Console.WriteLine("End Rename");
         }
     }
 }

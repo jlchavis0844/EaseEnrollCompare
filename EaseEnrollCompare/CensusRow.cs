@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 
-public class CensusRow {
+public class CensusRow
+{
     public string Changes { get; set; }
     public string CompanyName { get; set; }
     public string EID { get; set; }
@@ -47,8 +48,6 @@ public class CensusRow {
     public string SickHours { get; set; }
     public string PersonalHours { get; set; }
     public string W2Wages { get; set; }
-    public string BenefitCompensationAmount { get; set; }
-    public string BenefitCompensationType { get; set; }
     public string PayCycle { get; set; }
     public string PayPeriods { get; set; }
     public string CostFactor { get; set; }
@@ -76,6 +75,8 @@ public class CensusRow {
     public string PlanImportID { get; set; }
     public string EffectiveDate { get; set; }
     public string ActivityDate { get; set; }
+    public string BenefitCompensationAmount { get; set; }
+    public string BenefitCompensationType { get; set; }
     public string CoverageDetails { get; set; }
     public string ElectionStatus { get; set; }
     public string ProcessedDate { get; set; }
@@ -98,13 +99,13 @@ public class CensusRow {
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    //public string CalPERS_ID { get; set; }
     public string EnrolledBy { get; set; }
     public string NewBusiness { get; set; }
     public string VSPCode { get; set; }
 
 
-    public bool Compare(CensusRow rhs) {
+    public bool Compare(CensusRow rhs)
+    {
         bool matched = true;
 
         if (this.Changes == null)
@@ -113,88 +114,115 @@ public class CensusRow {
         if (rhs.Changes == null)
             rhs.Changes = string.Empty;
 
-        if (this.ToString() != rhs.ToString()) {
+        if (this.ToString() != rhs.ToString())
+        {
 
-             matched = false;
-            if (this.SSN != rhs.SSN) {
+            matched = false;
+            if (this.SSN != rhs.SSN)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|SSN|";
             }
-            if (this.Address1 != rhs.Address1) {
+            if (this.Address1 != rhs.Address1)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|Address1|";
             }
-            if (this.Address2 != rhs.Address2) {
+            if (this.Address2 != rhs.Address2)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|Address2|";
             }
-            if (this.City != rhs.City) {
+            if (this.City != rhs.City)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|City|";
             }
-            if (this.State != rhs.State) {
+            if (this.State != rhs.State)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|State|";
             }
-            if (this.Zip != rhs.Zip) {
+            if (this.Zip != rhs.Zip)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|Zip|";
             }
-            if (this.PersonalPhone != rhs.PersonalPhone) {
+            if (this.PersonalPhone != rhs.PersonalPhone)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|PersonalPhone|";
             }
-            if (this.WorkPhone != rhs.WorkPhone) {
+            if (this.WorkPhone != rhs.WorkPhone)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|WorkPhone|";
             }
-            if (this.MobilePhone != rhs.MobilePhone) {
+            if (this.MobilePhone != rhs.MobilePhone)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|MobilePhone|";
             }
-            if (this.EmployeeStatus != rhs.EmployeeStatus) {
+            if (this.EmployeeStatus != rhs.EmployeeStatus)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeStatus|";
             }
-            if (this.HireDate != rhs.HireDate) {
+            if (this.HireDate != rhs.HireDate)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|HireDate|";
             }
-            if (this.TerminationDate != rhs.TerminationDate) {
+            if (this.TerminationDate != rhs.TerminationDate)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|TerminationDate|";
             }
-            if (this.JobClass != rhs.JobClass) {
+            if (this.JobClass != rhs.JobClass)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|JobClass|";
             }
-            if (this.Division != rhs.Division) {
+            if (this.Division != rhs.Division)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|Division|";
             }
-            if (this.MaritalStatus != rhs.MaritalStatus) {
+            if (this.MaritalStatus != rhs.MaritalStatus)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|MaritalStatus|";
             }
-            if (this.ScheduledHours != rhs.ScheduledHours) {
+            if (this.ScheduledHours != rhs.ScheduledHours)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|ScheduledHours|";
             }
-            if (this.PayCycle != rhs.PayCycle) {
+            if (this.PayCycle != rhs.PayCycle)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
             }
-            if (this.PlanDisplayName != rhs.PlanDisplayName) {
+            if (this.PlanDisplayName != rhs.PlanDisplayName)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
-            if (this.CoverageDetails != rhs.CoverageDetails) {
+            if (this.CoverageDetails != rhs.CoverageDetails)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|CoverageDetails|";
             }
-            if (this.EffectiveDate != rhs.EffectiveDate) {
+            if (this.EffectiveDate != rhs.EffectiveDate)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
             }
-            if (this.ElectionStatus != rhs.ElectionStatus) {
+            if (this.ElectionStatus != rhs.ElectionStatus)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|ElectionStatus|";
             }
-            if (this.TotalRate != rhs.TotalRate) {
+            if (this.TotalRate != rhs.TotalRate)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
             }
-            if (this.EmployeeCostPerDeductionPeriod != rhs.EmployeeCostPerDeductionPeriod) {
+            if (this.EmployeeCostPerDeductionPeriod != rhs.EmployeeCostPerDeductionPeriod)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
             }
-            if (this.ESignDate != rhs.ESignDate) {
+            if (this.ESignDate != rhs.ESignDate)
+            {
                 rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
             }
 
             rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
-            if (rhs.Changes.StartsWith("|")) {
+            if (rhs.Changes.StartsWith("|"))
+            {
                 rhs.Changes = rhs.Changes.Substring(1);
             }
 
-            if (rhs.Changes.EndsWith("|")) {
+            if (rhs.Changes.EndsWith("|"))
+            {
                 rhs.Changes = rhs.Changes.Substring(0, rhs.Changes.Length - 1);
             }
         }
@@ -203,42 +231,49 @@ public class CensusRow {
     }
 
     // override to print all frields in a CensusRow
-    public override string ToString() {
+    public override string ToString()
+    {
         if (BenefitCompensationAmount == null)
             BenefitCompensationAmount = string.Empty;
 
         if (BenefitCompensationType == null)
             BenefitCompensationType = string.Empty;
 
-        string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | " +
-            this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | " +
-            this.SSN.Trim() + " | " + this.Gender.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " +
-            this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " +
-            this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " +
-            this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | " +
-            this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | " +
-            this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | " +
-            this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | " +
-            this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + this.BenefitCompensationType + " | " +
-            this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | " +
-            this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | " +
-            this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | " +
-            this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | " + //this.UnlockEnrollmentDate + " | " +
-            this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | " +
-            this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | " +
-            this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | " +
-            this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | " +
-            this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
-            this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
-            this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
-            this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
+        string retStr = this.Changes.Trim() + " | " + this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + 
+            this.FirstName.Trim() + " | " + this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + 
+            this.RelationshipCode.Trim() + " | " + this.SSN.Trim() + " | " + this.Gender.Trim() + " | " + this.BirthDate.Trim() + " | " + 
+            this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " + this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + 
+            this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " + this.County.Trim() + " | " + this.Country.Trim() + " | " + 
+            this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " + this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + 
+            this.PersonalEmail.Trim() + " | " + this.EmployeeType.Trim() + " | " + this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + 
+            this.TerminationDate.Trim() + " | " + this.Department.Trim() + " | " + this.Division.Trim() + " | " + this.JobClass.Trim() + " | " +
+            this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate.Trim() + " | " + this.MaritalLocation.Trim() + " | " +
+            this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours.Trim() + " | " + this.PersonalHours.Trim() + " | " +
+            this.W2Wages.Trim() + " | " + this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " +
+            this.TobaccoUser.Trim() + " | " + this.Disabled.Trim() + " | " + this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " +
+            this.MedicareCDate.Trim() + " | " + this.MedicareDDate.Trim() + " | " + this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + 
+            this.DentalPCPName.Trim() + " | " + this.DentalPCPID.Trim() + " | " + this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + 
+            this.BenefitEligibleDate.Trim() + " | " + this.UnlockEnrollmentDate.Trim() + " | " + this.OriginalEffectiveDateInfo.Trim() + " | " + 
+            this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate.Trim() + " | " + 
+            this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID.Trim() + " | " + 
+            this.EffectiveDate.Trim() + " | " + this.ActivityDate.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + 
+            this.BenefitCompensationType.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + 
+            this.ProcessedDate.Trim() + " | " + this.RiderCodes.Trim() + " | " + this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + 
+            this.PolicyNumber.Trim() + " | " + this.SubgroupNumber.Trim() + " | " + this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + 
+            this.TotalRate.Trim() + " | " + this.EmployeeRate.Trim() + " | " + this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + 
+            this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost.Trim() + " | " + this.EmployeePostTaxCost.Trim() + " | " + 
+            this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " + this.LastModifiedDate.Trim() + " | " + 
+            this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim() + " | " + this.NewBusiness.Trim() + " | " + 
+            this.VSPCode.Trim();
 
         return retStr.Replace("  ", " ").Trim();
     }
 }
 
-public class CensusRowClassMap : ClassMap<CensusRow> {
-    public CensusRowClassMap() {
+public class CensusRowClassMap : ClassMap<CensusRow>
+{
+    public CensusRowClassMap()
+    {
         this.Map(m => m.CompanyName).Name("Company Name").ToString().Trim();
         this.Map(m => m.EID).Name("EID").ToString().Trim();
         this.Map(m => m.Location).Name("Location").ToString().Trim();
@@ -340,7 +375,8 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         // Map(m => m.NewBusiness).Name("New Business");
     }
 
-    public static void WriteHeader(ExcelWorksheet worksheet) {
+    public static void WriteHeader(ExcelWorksheet worksheet)
+    {
         if (worksheet.Cells[1, 1].Value != null)
             worksheet.Cells[1, 1].Value = "Company Name";
 
