@@ -161,7 +161,7 @@ namespace EaseEnrollCompare {
         }
 
         private void btnCompare_Click(object sender, EventArgs e) {
-            btnCompare.Enabled = false;
+            //btnCompare.Enabled = false;
             btnDropData.Enabled = true;
             btnOutput.Enabled = true;
 
