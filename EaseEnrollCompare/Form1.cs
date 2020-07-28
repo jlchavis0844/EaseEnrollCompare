@@ -164,6 +164,13 @@ namespace EaseEnrollCompare {
             //btnCompare.Enabled = false;
             btnDropData.Enabled = true;
             btnOutput.Enabled = true;
+            dgvOutPut.DataSource = null;
+            
+            Drops.Clear();
+            Adds.Clear();
+            output.Clear();
+
+            dgvOutPut.Update();
 
             NewRecords = (from rec in NewRecords
                           orderby rec.EID, rec.RelationshipCode, rec.FirstName

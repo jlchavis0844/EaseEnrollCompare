@@ -176,7 +176,14 @@ public class CensusRow {
                 rhs.Changes = this.Changes = this.Changes + "|CoverageDetails|";
             }
             if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
+                if(!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
+                    this.EffectiveDate = DateTime.Parse(this.EffectiveDate).ToString("MM/dd/yyyy");
+                    rhs.EffectiveDate = DateTime.Parse(rhs.EffectiveDate).ToString("MM/dd/yyyy");
+                }
+
+                if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+                    rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
+                }
             }
             if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|ElectionStatus|";
@@ -188,7 +195,13 @@ public class CensusRow {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
             }
             if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+                if (!string.IsNullOrWhiteSpace(this.ESignDate) && !string.IsNullOrWhiteSpace(rhs.ESignDate)) {
+                    this.ESignDate = DateTime.Parse(this.ESignDate).ToString("MM/dd/yyyy");
+                    rhs.ESignDate = DateTime.Parse(rhs.ESignDate).ToString("MM/dd/yyyy");
+                }
+                if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
+                    rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+                }
             }
             if (this.BenefitCompensationAmount.Trim() != rhs.BenefitCompensationAmount.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationAmount|";
@@ -208,13 +221,16 @@ public class CensusRow {
             }
 
             if(this.Changes.Trim().Length == 0) {
+                if (this.ToString() == rhs.ToString())
+                    return true;
+
                 int stopNum = 0;
                 string message = string.Empty;
                 var leftStr = this.ToString().ToCharArray();
                 var rightStr = rhs.ToString().ToCharArray();
 
                 if(leftStr.Length >= rightStr.Length) {
-                    for(int i = 0; i < leftStr.Length; i++) {
+                    for(int i = 0; i < rightStr.Length; i++) {
                         if(leftStr[i] != rightStr[i]) {
                             stopNum = i;
                             break;
@@ -222,9 +238,9 @@ public class CensusRow {
                     }
 
                     message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
-                    message += rhs.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+                    message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n";
                 } else {
-                    for (int i = 0; i < rightStr.Length; i++) {
+                    for (int i = 0; i < leftStr.Length; i++) {
                         if (rightStr[i] != leftStr[i]) {
                             stopNum = i;
                             break;
@@ -233,12 +249,10 @@ public class CensusRow {
 
                     message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n\n";
                     message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
-
-                    this.Changes = "OTHER";
                 }
                 this.Changes = message;
-                MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
-
+                Console.WriteLine(message);
+                //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
             }
         }
 
@@ -253,7 +267,9 @@ public class CensusRow {
         if (BenefitCompensationType == null)
             BenefitCompensationType = string.Empty;
 
-        string waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
+        string waVSPcode = string.Empty;
+        if(!string.IsNullOrWhiteSpace(this.VSPCode))
+            waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
 
         string retStr = this.Changes.Trim() + " | " + this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " +
             this.FirstName.Trim() + " | " + this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " +
