@@ -182,8 +182,8 @@ namespace EaseEnrollCompare {
 
             foreach (var rec in OldRecords) {
                 List<CensusRow> matches = NewRecords.Where(x =>
-                x.EID == rec.EID && x.FirstName == rec.FirstName &&
-                x.MiddleName == rec.MiddleName && x.LastName == rec.LastName &&
+                x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-","") == x.SSN.Trim().Replace("-", "") &&
+                /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
                 x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
 
                 if (matches.Count == 0) {
@@ -489,17 +489,28 @@ namespace EaseEnrollCompare {
 
                 var tempRec = OriginalNewRecords.Where(x =>
                 x.EID == rec.EID && x.FirstName == rec.FirstName &&
-                x.MiddleName == rec.MiddleName && x.LastName == rec.LastName &&
+                x.SSN == rec.SSN && x.LastName == rec.LastName &&
                 x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
 
                 if (tempRec == null) {
+                    string tMsg = string.Empty;
+                    //if (!MissingTermEIDs.Contains(rec.EID)) {
+                        tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n";
+                        //MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
+                        //MissingTermEIDs.Add(rec.EID);
 
-                    if (!MissingTermEIDs.Contains(rec.EID)) {
-                        MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
-                        MissingTermEIDs.Add(rec.EID);
+                        tempRec = OriginalNewRecords.Where(x =>
+                            x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
+
+                        if (tempRec != null) {
+                            tMsg += "Found Missing Term using SSN.\nProbable EID Change";
+                            //MessageBox.Show("Found Missing Term using SSN.\nProbable EID Change");
+                        }
+                        MessageBox.Show(tMsg);
                         continue;
-                    }
+                    //}
                 }
+
                 tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, Plan Effective Start Date is used for plan start and effective date is for term date
                 tempRec.Changes = rec.Changes;
                 tempRec.ElectionStatus = rec.ElectionStatus;
@@ -575,7 +586,7 @@ namespace EaseEnrollCompare {
             dt.Columns[7].ColumnName = "Relationship";
             dt.Columns[8].ColumnName = "Relationship Code";
             dt.Columns[9].ColumnName = "SSN";
-            dt.Columns[10].ColumnName = "Gender";
+            dt.Columns[10].ColumnName = "Sex";
             dt.Columns[11].ColumnName = "Birth Date";
             dt.Columns[12].ColumnName = "Race";
             dt.Columns[13].ColumnName = "Citizenship";
