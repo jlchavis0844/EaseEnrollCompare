@@ -180,11 +180,22 @@ namespace EaseEnrollCompare {
                           orderby rec.EID, rec.RelationshipCode, rec.FirstName
                           select rec).ToList();
 
+            if (this.cbBasic.Checked) {
+                NewRecords.RemoveAll(r => r.RelationshipCode != "0");
+                OldRecords.RemoveAll(r => r.RelationshipCode != "0");
+            }
+
+
             foreach (var rec in OldRecords) {
-                List<CensusRow> matches = NewRecords.Where(x =>
-                x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-","") == x.SSN.Trim().Replace("-", "") &&
-                /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
-                x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
+                List<CensusRow> matches;
+                if (this.cbBasic.Checked) {
+                    matches = NewRecords.Where(x => x.EID == rec.EID && x.PlanType == rec.PlanType).ToList();
+                } else {
+                    matches = NewRecords.Where(x =>
+                    x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
+                    /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
+                    x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
+                }
 
                 if (matches.Count == 0) {
                     rec.Changes = "DROP";
@@ -193,19 +204,23 @@ namespace EaseEnrollCompare {
                 } else if (matches.Count > 1) {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
                 } else {
-                    if (!rec.Compare(matches.First())) {
+                    if (!rec.Compare(matches.First(), this.cbBasic.Checked)) {
                         Changes.Add(matches.First());
                     }
                 }
             }
 
             foreach (var rec in NewRecords) {
-                if (rec.LastName == "Knight")
-                    Console.WriteLine("STOP");
-                List<CensusRow> matches = OldRecords.Where(x =>
-                x.EID == rec.EID && x.FirstName == rec.FirstName &&
-                x.MiddleName == rec.MiddleName && x.LastName == rec.LastName &&
-                x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
+                List<CensusRow> matches;
+
+                if (this.cbBasic.Checked) {
+                    matches = OldRecords.Where(x => x.EID == rec.EID && x.PlanType == rec.PlanType).ToList();
+                } else {
+                    matches = OldRecords.Where(x =>
+                        x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
+                        /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
+                        x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
+                }
 
                 if (matches.Count == 0) {
                     rec.Changes = "ADD";

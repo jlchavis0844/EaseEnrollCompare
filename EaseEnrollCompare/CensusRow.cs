@@ -106,17 +106,17 @@ public class CensusRow {
     public string VSPCode { get; set; }
 
 
-    public bool Compare(CensusRow rhs) {
-        PropertyInfo[] properties = typeof(CensusRow).GetProperties();
-
-        //foreach (PropertyInfo pinfo in rhs.GetType().GetProperties()) {
-        //    object value = pinfo.GetValue(rhs, null);
-        //    if (value == null) {
-        //        pinfo.SetValue(rhs, string.Empty);
-        //    }
-        //}
-
+    public bool Compare(CensusRow rhs, bool basic) {
         bool matched = true;
+
+        if (basic) {
+            matched = (rhs.EID == this.EID && rhs.PlanType == this.PlanType && rhs.CoverageDetails == this.CoverageDetails);
+            if (!matched) {
+                rhs.Changes = this.CoverageDetails + " => " + rhs.CoverageDetails;
+                return false;
+            } else return matched;
+        }
+
 
         if (this.Changes == null)
             this.Changes = string.Empty;
