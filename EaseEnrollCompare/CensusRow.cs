@@ -15,7 +15,7 @@ public class CensusRow {
     public string Relationship { get; set; }
     public string RelationshipCode { get; set; }
     public string SSN { get; set; }
-    public string Gender { get; set; }
+    public string Sex { get; set; }
     public string BirthDate { get; set; }
     public string Race { get; set; }
     public string Citizenship { get; set; }
@@ -47,8 +47,8 @@ public class CensusRow {
     public string SickHours { get; set; }
     public string PersonalHours { get; set; }
     public string W2Wages { get; set; }
-    public string Compensation { get; set; }
-    public string CompensationType { get; set; }
+    public string BenefitCompensationType { get; set; }
+    public string BenefitCompensationAmount { get; set; }
     public string PayCycle { get; set; }
     public string PayPeriods { get; set; }
     public string CostFactor { get; set; }
@@ -204,28 +204,58 @@ public class CensusRow {
 
     // override to print all frields in a CensusRow
     public override string ToString() {
-        string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | " +
-            this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | " +
-            this.SSN.Trim() + " | " + this.Gender.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " +
-            this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " +
-            this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " +
-            this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | " +
-            this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | " +
-            this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | " +
-            this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | " +
-            this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.Compensation.Trim() + " | " + this.CompensationType + " | " +
-            this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | " +
-            this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | " +
-            this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | " +
-            this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | " + //this.UnlockEnrollmentDate + " | " +
-            this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | " +
-            this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | " +
-            this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | " +
-            this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | " +
-            this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
-            this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
-            this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
-            this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
+        if (this.BenefitCompensationType == null)
+            BenefitCompensationType = string.Empty;
+        if (this.BenefitCompensationAmount == null)
+            BenefitCompensationAmount = string.Empty;
+
+        //if (Sex == null)
+           // Sex = "";
+
+        //string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | " +
+        //    this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | " +
+        //    this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " +
+        //    this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " +
+        //    this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " +
+        //    this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | " +
+        //    this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | " +
+        //    this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | " +
+        //    this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | " +
+        //    this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + this.BenefitCompensationType + " | " +
+        //    this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | " +
+        //    this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | " +
+        //    this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | " +
+        //    this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | " + //this.UnlockEnrollmentDate + " | " +
+        //    this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | " +
+        //    this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | " +
+        //    this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | " +
+        //    this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | " +
+        //    this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
+        //    this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
+        //    this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
+        //    this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
+        string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | ";
+        retStr += this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | ";
+        retStr += this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | ";
+        retStr += this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | ";
+        retStr += this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | ";
+        retStr += this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | ";
+        retStr += this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | ";
+        retStr += this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | ";
+        retStr += this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | ";
+        retStr += this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + this.BenefitCompensationType + " | ";
+        retStr += this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | ";
+        retStr += this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | ";
+        retStr += this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | ";
+        retStr += this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | "; //this.UnlockEnrollmentDate + " | " ;
+        retStr += this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | ";
+        retStr += this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | ";
+        retStr += this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | ";
+        retStr += this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | ";
+        retStr += this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | ";
+        retStr += this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | ";
+        retStr += this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | ";
+        retStr += this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
 
         return retStr.Replace("  ", " ").Trim();
     }
@@ -242,7 +272,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.Relationship).Name("Relationship").ToString().Trim();
         this.Map(m => m.RelationshipCode).Name("Relationship Code").ToString().Trim();
         this.Map(m => m.SSN).Name("SSN").ToString().Trim();
-        this.Map(m => m.Gender).Name("Gender").ToString().Trim();
+        this.Map(m => m.Sex).Name("Sex").ToString().Trim();
         this.Map(m => m.BirthDate).Name("Birth Date").ToString().Trim();
         this.Map(m => m.Race).Name("Race").ToString().Trim();
         this.Map(m => m.Citizenship).Name("Citizenship").ToString().Trim();
@@ -274,8 +304,8 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.SickHours).Name("Sick Hours").ToString().Trim();
         this.Map(m => m.PersonalHours).Name("Personal Hours").ToString().Trim();
         this.Map(m => m.W2Wages).Name("W2 Wages").ToString().Trim();
-        this.Map(m => m.Compensation).Name("Compensation").ToString().Trim();
-        this.Map(m => m.CompensationType).Name("Compensation Type").ToString().Trim();
+        this.Map(m => m.BenefitCompensationAmount).Name("Benefit Compensation Amount").ToString().Trim();
+        this.Map(m => m.BenefitCompensationType).Name("Benefit Compensation Type").ToString().Trim();
         this.Map(m => m.PayCycle).Name("Pay Cycle").ToString().Trim();
         this.Map(m => m.PayPeriods).Name("Pay Periods").ToString().Trim();
         this.Map(m => m.CostFactor).Name("Cost Factor").ToString().Trim();
@@ -356,7 +386,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         if (worksheet.Cells[1, 10].Value != null)
             worksheet.Cells[1, 10].Value = "SSN";
         if (worksheet.Cells[1, 11].Value != null)
-            worksheet.Cells[1, 11].Value = "Gender";
+            worksheet.Cells[1, 11].Value = "Sex";
         if (worksheet.Cells[1, 12].Value != null)
             worksheet.Cells[1, 12].Value = "Birth Date";
         if (worksheet.Cells[1, 13].Value != null)

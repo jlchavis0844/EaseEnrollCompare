@@ -557,7 +557,7 @@ namespace EaseEnrollCompare {
             dt.Columns[7].ColumnName = "Relationship";
             dt.Columns[8].ColumnName = "Relationship Code";
             dt.Columns[9].ColumnName = "SSN";
-            dt.Columns[10].ColumnName = "Gender";
+            dt.Columns[10].ColumnName = "Sex";
             dt.Columns[11].ColumnName = "Birth Date";
             dt.Columns[12].ColumnName = "Race";
             dt.Columns[13].ColumnName = "Citizenship";
