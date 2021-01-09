@@ -42,6 +42,7 @@
             this.cbCSV = new System.Windows.Forms.CheckBox();
             this.btnDropData = new System.Windows.Forms.Button();
             this.dpActiveDateNew = new System.Windows.Forms.DateTimePicker();
+            this.cbBasic = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -253,11 +254,22 @@
             this.dpActiveDateNew.Size = new System.Drawing.Size(109, 20);
             this.dpActiveDateNew.TabIndex = 18;
             // 
+            // cbBasic
+            // 
+            this.cbBasic.AutoSize = true;
+            this.cbBasic.Location = new System.Drawing.Point(339, 144);
+            this.cbBasic.Name = "cbBasic";
+            this.cbBasic.Size = new System.Drawing.Size(213, 17);
+            this.cbBasic.TabIndex = 19;
+            this.cbBasic.Text = "Basic Mode (EID, Type, Coverage only)";
+            this.cbBasic.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.cbBasic);
             this.Controls.Add(this.dpActiveDateNew);
             this.Controls.Add(this.btnDropData);
             this.Controls.Add(this.cbCSV);
@@ -306,6 +318,7 @@
         private System.Windows.Forms.CheckBox cbCSV;
         private System.Windows.Forms.Button btnDropData;
         private System.Windows.Forms.DateTimePicker dpActiveDateNew;
+        private System.Windows.Forms.CheckBox cbBasic;
     }
 }
 
