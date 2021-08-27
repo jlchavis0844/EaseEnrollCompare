@@ -149,6 +149,7 @@ namespace EaseEnrollCompare {
                 dgvOutPut.Columns["JobClass"].Visible = true;
                 dgvOutPut.Columns["JobTitle"].Visible = true;
                 dgvOutPut.Columns["PayPeriods"].Visible = true;
+                dgvOutPut.Columns["PlanEffectiveStartDate"].Visible = true;
                 dgvOutPut.Columns["PlanType"].Visible = true;
                 dgvOutPut.Columns["PlanDisplayName"].Visible = true;
                 dgvOutPut.Columns["EffectiveDate"].Visible = true;
@@ -182,7 +183,7 @@ namespace EaseEnrollCompare {
 
             if (this.cbBasic.Checked) {
                 NewRecords.RemoveAll(r => r.RelationshipCode != "0");
-                OldRecords.RemoveAll(r => r.RelationshipCode != "0");
+                OldRecords.RemoveAll(r => r.Relationship != "Employee");
             }
 
 
@@ -192,8 +193,8 @@ namespace EaseEnrollCompare {
                     matches = NewRecords.Where(x => x.EID == rec.EID && x.PlanType == rec.PlanType).ToList();
                 } else {
                     matches = NewRecords.Where(x =>
-                    x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
-                    /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
+                    x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && //rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
+                    /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() &&*/ x.LastName.ToUpper() == rec.LastName.ToUpper() &&
                     x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
                 }
 
@@ -217,7 +218,7 @@ namespace EaseEnrollCompare {
                     matches = OldRecords.Where(x => x.EID == rec.EID && x.PlanType == rec.PlanType).ToList();
                 } else {
                     matches = OldRecords.Where(x =>
-                        x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
+                        x.EID == rec.EID && x.FirstName.ToUpper() == rec.FirstName.ToUpper() && //rec.SSN.Trim().Replace("-", "") == x.SSN.Trim().Replace("-", "") &&
                         /*x.MiddleName.ToUpper() == rec.MiddleName.ToUpper() && */x.LastName.ToUpper() == rec.LastName.ToUpper() &&
                         x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).ToList();
                 }
@@ -229,6 +230,14 @@ namespace EaseEnrollCompare {
                 } else if (matches.Count > 1) {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
                 }
+            }
+
+            var newDrops = new List<CensusRow>();
+            foreach(var drop in Drops) {
+                var tempDrop = drop;
+                tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN).ToList().First().EffectiveDate;
+                tempDrop.CoverageDetails = drop.CoverageDetails + " - TERMINATED";
+                tempDrop.ElectionStatus = "Terminated";
             }
 
             output.AddRange(Adds);
@@ -502,15 +511,24 @@ namespace EaseEnrollCompare {
             List<CensusRow> newDrops = new List<CensusRow>();
             foreach (var rec in Drops) {
 
+                //var tempRec = OriginalNewRecords.Where(x =>
+                //x.EID == rec.EID && x.FirstName == rec.FirstName &&
+                //x.SSN == rec.SSN && x.LastName == rec.LastName &&
+                //x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
+                //var tempRec = OriginalNewRecords.Where(x =>
+                //x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
+
+                //if(tempRec == null) {
                 var tempRec = OriginalNewRecords.Where(x =>
-                x.EID == rec.EID && x.FirstName == rec.FirstName &&
-                x.SSN == rec.SSN && x.LastName == rec.LastName &&
-                x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
+                    x.EID == rec.EID && x.FirstName == rec.FirstName &&
+                    x.SSN == rec.SSN && x.LastName == rec.LastName &&
+                    x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
+               // }
 
                 if (tempRec == null) {
                     string tMsg = string.Empty;
                     //if (!MissingTermEIDs.Contains(rec.EID)) {
-                        tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n";
+                        tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
                         //MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
                         //MissingTermEIDs.Add(rec.EID);
 
@@ -526,7 +544,10 @@ namespace EaseEnrollCompare {
                     //}
                 }
 
-                tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, Plan Effective Start Date is used for plan start and effective date is for term date
+                //tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, Plan Effective Start Date is used for plan start and effective date is for term date
+
+                tempRec.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == rec.EID && d.SSN == rec.SSN).ToList().First().EffectiveDate;
+                tempRec.CoverageDetails = rec.CoverageDetails + " - TERMINATED";
                 tempRec.Changes = rec.Changes;
                 tempRec.ElectionStatus = rec.ElectionStatus;
 

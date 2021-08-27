@@ -1,11 +1,6 @@
 ﻿using CsvHelper.Configuration;
 using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
 
 public class CensusRow {
     public string Changes { get; set; }
@@ -280,6 +275,9 @@ public class CensusRow {
         if(!string.IsNullOrWhiteSpace(this.VSPCode))
             waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
 
+        if (string.IsNullOrWhiteSpace(this.EnrolledBy))
+            this.EnrolledBy = string.Empty;
+
         string retStr = this.Changes.Trim() + " | " + this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim();
             retStr += this.FirstName.Trim() + " | " + this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim();
             retStr += this.RelationshipCode.Trim() + " | " + this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim();
@@ -304,7 +302,7 @@ public class CensusRow {
             retStr += this.TotalRate.Trim() + " | " + this.EmployeeRate.Trim() + " | " + this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim();
             retStr += this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost.Trim() + " | " + this.EmployeePostTaxCost.Trim();
             retStr += this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " + this.LastModifiedDate.Trim();
-        retStr += this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim();// + " | " + this.NewBusiness.Trim();
+            retStr += this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim();// + " | " + this.NewBusiness.Trim();
             retStr += waVSPcode.Trim();
 
         return retStr.Replace("  ", " ").Trim();
