@@ -237,7 +237,7 @@ namespace EaseEnrollCompare {
                 var tempDrop = drop;
                 tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN).ToList().First().EffectiveDate;
                 tempDrop.CoverageDetails = drop.CoverageDetails + " - TERMINATED";
-                tempDrop.ElectionStatus = "Terminated";
+                //tempDrop.ElectionStatus = "Terminated";
             }
 
             output.AddRange(Adds);

@@ -1,11 +1,6 @@
 ﻿using CsvHelper.Configuration;
 using OfficeOpenXml;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
 
 public class CensusRow {
     public string Changes { get; set; }
@@ -38,6 +33,7 @@ public class CensusRow {
     public string EmployeeStatus { get; set; }
     public string HireDate { get; set; }
     public string TerminationDate { get; set; }
+    public string TerminationType { get; set; }
     public string Department { get; set; }
     public string Division { get; set; }
     public string JobClass { get; set; }
@@ -50,8 +46,6 @@ public class CensusRow {
     public string SickHours { get; set; }
     public string PersonalHours { get; set; }
     public string W2Wages { get; set; }
-    public string BenefitCompensationType { get; set; }
-    public string BenefitCompensationAmount { get; set; }
     public string PayCycle { get; set; }
     public string PayPeriods { get; set; }
     public string CostFactor { get; set; }
@@ -79,6 +73,8 @@ public class CensusRow {
     public string PlanImportID { get; set; }
     public string EffectiveDate { get; set; }
     public string ActivityDate { get; set; }
+    public string BenefitCompensationAmount { get; set; }
+    public string BenefitCompensationType { get; set; }
     public string CoverageDetails { get; set; }
     public string ElectionStatus { get; set; }
     public string ProcessedDate { get; set; }
@@ -97,18 +93,28 @@ public class CensusRow {
     public string EmployeePreTaxCost { get; set; }
     public string EmployeePostTaxCost { get; set; }
     public string EmployeeCostPerDeductionPeriod { get; set; }
+    public string EmployerCostPerDeductionPeriod { get; set; }
+    public string EmployerContribution { get; set; }
     public string PlanDeductionCycle { get; set; }
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    //public string CalPERS_ID { get; set; }
     public string EnrolledBy { get; set; }
     public string NewBusiness { get; set; }
     public string VSPCode { get; set; }
 
 
-    public bool Compare(CensusRow rhs) {
+    public bool Compare(CensusRow rhs, bool basic) {
         bool matched = true;
+
+        if (basic) {
+            matched = (rhs.EID == this.EID && rhs.PlanType == this.PlanType && rhs.CoverageDetails == this.CoverageDetails);
+            if (!matched) {
+                rhs.Changes = this.CoverageDetails + " => " + rhs.CoverageDetails;
+                return false;
+            } else return matched;
+        }
+
 
         if (this.Changes == null)
             this.Changes = string.Empty;
@@ -118,79 +124,99 @@ public class CensusRow {
 
         if (this.ToString() != rhs.ToString()) {
 
-             matched = false;
-            if (this.SSN != rhs.SSN) {
+            matched = false;
+            if (this.SSN.Trim() != rhs.SSN.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|SSN|";
             }
-            if (this.Address1 != rhs.Address1) {
+            if (this.Address1.Trim() != rhs.Address1.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Address1|";
             }
-            if (this.Address2 != rhs.Address2) {
+            if (this.Address2.Trim() != rhs.Address2.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Address2|";
             }
-            if (this.City != rhs.City) {
+            if (this.City.Trim() != rhs.City.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|City|";
             }
-            if (this.State != rhs.State) {
+            if (this.State.Trim() != rhs.State.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|State|";
             }
-            if (this.Zip != rhs.Zip) {
+            if (this.Zip.Trim() != rhs.Zip.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Zip|";
             }
-            if (this.PersonalPhone != rhs.PersonalPhone) {
+            if (this.PersonalPhone.Trim() != rhs.PersonalPhone.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|PersonalPhone|";
             }
-            if (this.WorkPhone != rhs.WorkPhone) {
+            if (this.WorkPhone.Trim() != rhs.WorkPhone.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|WorkPhone|";
             }
-            if (this.MobilePhone != rhs.MobilePhone) {
+            if (this.MobilePhone.Trim() != rhs.MobilePhone.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|MobilePhone|";
             }
-            if (this.EmployeeStatus != rhs.EmployeeStatus) {
+            if (this.EmployeeStatus.Trim() != rhs.EmployeeStatus.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeStatus|";
             }
-            if (this.HireDate != rhs.HireDate) {
+            if (this.HireDate.Trim() != rhs.HireDate.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|HireDate|";
             }
-            if (this.TerminationDate != rhs.TerminationDate) {
+            if (this.TerminationDate.Trim() != rhs.TerminationDate.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|TerminationDate|";
             }
-            if (this.JobClass != rhs.JobClass) {
+            if (this.JobClass.Trim() != rhs.JobClass.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|JobClass|";
             }
-            if (this.Division != rhs.Division) {
+            if (this.Division.Trim() != rhs.Division.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Division|";
             }
-            if (this.MaritalStatus != rhs.MaritalStatus) {
+            if (this.MaritalStatus.Trim() != rhs.MaritalStatus.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|MaritalStatus|";
             }
-            if (this.ScheduledHours != rhs.ScheduledHours) {
+            if (this.ScheduledHours.Trim() != rhs.ScheduledHours.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|ScheduledHours|";
             }
-            if (this.PayCycle != rhs.PayCycle) {
+            if (this.PayCycle.Trim() != rhs.PayCycle.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
             }
-            if (this.PlanDisplayName != rhs.PlanDisplayName) {
+            if (this.PlanDisplayName.Trim() != rhs.PlanDisplayName.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
-            if (this.CoverageDetails != rhs.CoverageDetails) {
+            if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|CoverageDetails|";
             }
-            if (this.EffectiveDate != rhs.EffectiveDate) {
-                rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
+            if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+                if (!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
+                    this.EffectiveDate = DateTime.Parse(this.EffectiveDate).ToString("MM/dd/yyyy");
+                    rhs.EffectiveDate = DateTime.Parse(rhs.EffectiveDate).ToString("MM/dd/yyyy");
+                }
+
+                if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+                    rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
+                }
             }
-            if (this.ElectionStatus != rhs.ElectionStatus) {
+            if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|ElectionStatus|";
             }
-            if (this.TotalRate != rhs.TotalRate) {
+            if (this.TotalRate.Trim() != rhs.TotalRate.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
             }
-            if (this.EmployeeCostPerDeductionPeriod != rhs.EmployeeCostPerDeductionPeriod) {
+            if (this.EmployeeCostPerDeductionPeriod.Trim() != rhs.EmployeeCostPerDeductionPeriod.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
             }
-            if (this.ESignDate != rhs.ESignDate) {
-                rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+            if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
+                if (!string.IsNullOrWhiteSpace(this.ESignDate) && !string.IsNullOrWhiteSpace(rhs.ESignDate)) {
+                    this.ESignDate = DateTime.Parse(this.ESignDate).ToString("MM/dd/yyyy");
+                    rhs.ESignDate = DateTime.Parse(rhs.ESignDate).ToString("MM/dd/yyyy");
+                }
+                if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
+                    rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+                }
             }
+            if (this.BenefitCompensationAmount.Trim() != rhs.BenefitCompensationAmount.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationAmount|";
+            }
+            if (this.BenefitCompensationType.Trim() != rhs.BenefitCompensationType.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationType|";
+            }
+
 
             rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
             if (rhs.Changes.StartsWith("|")) {
@@ -200,6 +226,41 @@ public class CensusRow {
             if (rhs.Changes.EndsWith("|")) {
                 rhs.Changes = rhs.Changes.Substring(0, rhs.Changes.Length - 1);
             }
+
+            if (this.Changes.Trim().Length == 0) {
+                if (this.ToString() == rhs.ToString())
+                    return true;
+
+                int stopNum = 0;
+                string message = string.Empty;
+                var leftStr = this.ToString().ToCharArray();
+                var rightStr = rhs.ToString().ToCharArray();
+
+                if (leftStr.Length >= rightStr.Length) {
+                    for (int i = 0; i < rightStr.Length; i++) {
+                        if (leftStr[i] != rightStr[i]) {
+                            stopNum = i;
+                            break;
+                        }
+                    }
+
+                    message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+                    message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n";
+                } else {
+                    for (int i = 0; i < leftStr.Length; i++) {
+                        if (rightStr[i] != leftStr[i]) {
+                            stopNum = i;
+                            break;
+                        }
+                    }
+
+                    message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n\n";
+                    message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+                }
+                this.Changes = message;
+                Console.WriteLine(message);
+                //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
+            }
         }
 
         return matched;
@@ -207,88 +268,46 @@ public class CensusRow {
 
     // override to print all frields in a CensusRow
     public override string ToString() {
-        if (this.BenefitCompensationType == null)
-            BenefitCompensationType = string.Empty;
-        if (this.BenefitCompensationAmount == null)
+        if (BenefitCompensationAmount == null)
             BenefitCompensationAmount = string.Empty;
 
-        //if (Sex == null)
-           // Sex = "";
+        if (BenefitCompensationType == null)
+            BenefitCompensationType = string.Empty;
 
-        //string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | " +
-        //    this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | " +
-        //    this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " +
-        //    this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " +
-        //    this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " +
-        //    this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | " +
-        //    this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | " +
-        //    this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | " +
-        //    this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | " +
-        //    this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + this.BenefitCompensationType + " | " +
-        //    this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | " +
-        //    this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | " +
-        //    this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | " +
-        //    this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | " + //this.UnlockEnrollmentDate + " | " +
-        //    this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | " +
-        //    this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | " +
-        //    this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | " +
-        //    this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | " +
-        //    this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | " +
-        //    this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | " +
-        //    this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " +
-        //    this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
-        string retStr = this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + " | " + this.FirstName.Trim() + " | ";
-        retStr += this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + " | " + this.RelationshipCode.Trim() + " | ";
-        retStr += this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim() + " | " + this.Race.Trim() + " | " + this.Citizenship.Trim() + " | ";
-        retStr += this.Address1.Trim() + " | " + this.Address2.Trim() + " | " + this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | ";
-        retStr += this.County.Trim() + " | " + this.Country.Trim() + " | " + this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | ";
-        retStr += this.MobilePhone.Trim() + " | " + this.Email.Trim() + " | " + this.PersonalEmail.Trim() + " | " + this.EmployeeType + " | ";
-        retStr += this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + " | " + this.TerminationDate.Trim() + " | " + this.Department + " | ";
-        retStr += this.Division.Trim() + " | " + this.JobClass.Trim() + " | " + this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate + " | ";
-        retStr += this.MaritalLocation.Trim() + " | " + this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours + " | ";
-        retStr += this.PersonalHours.Trim() + " | " + this.W2Wages.Trim() + " | " + this.BenefitCompensationAmount.Trim() + " | " + this.BenefitCompensationType + " | ";
-        retStr += this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + " | " + this.TobaccoUser.Trim() + " | " + this.Disabled + " | ";
-        retStr += this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + " | " + this.MedicareCDate.Trim() + " | " + this.MedicareDDate + " | ";
-        retStr += this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + " | " + this.DentalPCPName.Trim() + " | " + this.DentalPCPID + " | ";
-        retStr += this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + " | " + this.BenefitEligibleDate.Trim() + " | "; //this.UnlockEnrollmentDate + " | " ;
-        retStr += this.OriginalEffectiveDateInfo.Trim() + " | " + this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate + " | ";
-        retStr += this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID + " | ";
-        retStr += this.EffectiveDate.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + " | " + this.RiderCodes + " | ";
-        retStr += this.Action.Trim() + " | " + this.WaiveReason.Trim() + " | " + this.PolicyNumber.Trim() + " | " + this.SubgroupNumber + " | ";
-        retStr += this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + " | " + this.TotalRate.Trim() + " | " + this.EmployeeRate + " | ";
-        retStr += this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + " | " + this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost + " | ";
-        retStr += this.EmployeePostTaxCost.Trim() + " | " + this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | ";
-        retStr += this.ESignDate.Trim() + " | " + Changes.Trim() + " | " + VSPCode;
+        string waVSPcode = string.Empty;
+        if (!string.IsNullOrWhiteSpace(this.VSPCode))
+            waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
 
         if (string.IsNullOrWhiteSpace(this.EnrolledBy))
             this.EnrolledBy = string.Empty;
 
-        string retStr = this.Changes.Trim() + " | " + this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim();
-            retStr += this.FirstName.Trim() + " | " + this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim();
-            retStr += this.RelationshipCode.Trim() + " | " + this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim();
-            retStr += this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " + this.Address1.Trim() + " | " + this.Address2.Trim();
-            retStr += this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " + this.County.Trim() + " | " + this.Country.Trim();
-            retStr += this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " + this.MobilePhone.Trim() + " | " + this.Email.Trim();
-            retStr += this.PersonalEmail.Trim() + " | " + this.EmployeeType.Trim() + " | " + this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim();
-            retStr += this.TerminationDate.Trim() + " | " + this.Department.Trim() + " | " + this.Division.Trim() + " | " + this.JobClass.Trim();
-            retStr += this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate.Trim() + " | " + this.MaritalLocation.Trim();
-            retStr += this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours.Trim() + " | " + this.PersonalHours.Trim();
-            retStr += this.W2Wages.Trim() + " | " + this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim();
-            retStr += this.TobaccoUser.Trim() + " | " + this.Disabled.Trim() + " | " + this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim();
-            retStr += this.MedicareCDate.Trim() + " | " + this.MedicareDDate.Trim() + " | " + this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim();
-            retStr += this.DentalPCPName.Trim() + " | " + this.DentalPCPID.Trim() + " | " + this.IPANumber.Trim() + " | " + this.OBGYN.Trim();
-            retStr += this.BenefitEligibleDate.Trim() + " | " + this.UnlockEnrollmentDate.Trim() + " | " + this.OriginalEffectiveDateInfo.Trim();
-            retStr += this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate.Trim();
-            retStr += this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID.Trim();
-            retStr += this.EffectiveDate.Trim() + " | " + this.ActivityDate.Trim() + " | " + this.BenefitCompensationAmount.Trim();
-            retStr += this.BenefitCompensationType.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim();
-            retStr += this.ProcessedDate.Trim() + " | " + this.RiderCodes.Trim() + " | " + this.Action.Trim() + " | " + this.WaiveReason.Trim();
-            retStr += this.PolicyNumber.Trim() + " | " + this.SubgroupNumber.Trim() + " | " + this.AgeDetermination.Trim() + " | " + this.Carrier.Trim();
-            retStr += this.TotalRate.Trim() + " | " + this.EmployeeRate.Trim() + " | " + this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim();
-            retStr += this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost.Trim() + " | " + this.EmployeePostTaxCost.Trim();
-            retStr += this.EmployeeCostPerDeductionPeriod.Trim() + " | " + this.PlanDeductionCycle.Trim() + " | " + this.LastModifiedDate.Trim();
-            retStr += this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim();// + " | " + this.NewBusiness.Trim();
-            retStr += waVSPcode.Trim();
+        string retStr = this.Changes.Trim() + " | " + this.CompanyName.Trim() + " | " + this.EID.Trim() + " | " + this.Location.Trim() + "|";
+        retStr += this.FirstName.Trim() + " | " + this.MiddleName.Trim() + " | " + this.LastName.Trim() + " | " + this.Relationship.Trim() + "|";
+        retStr += this.RelationshipCode.Trim() + " | " + this.SSN.Trim() + " | " + this.Sex.Trim() + " | " + this.BirthDate.Trim() + "|";
+        retStr += this.Race.Trim() + " | " + this.Citizenship.Trim() + " | " + this.Address1.Trim() + " | " + this.Address2.Trim() + "|";
+        retStr += this.City.Trim() + " | " + this.State.Trim() + " | " + this.Zip.Trim() + " | " + this.County.Trim() + " | " + this.Country.Trim() + "|";
+        retStr += this.PersonalPhone.Trim() + " | " + this.WorkPhone.Trim() + " | " + this.MobilePhone.Trim() + " | " + this.Email.Trim() + "|";
+        retStr += this.PersonalEmail.Trim() + " | " + this.EmployeeType.Trim() + " | " + this.EmployeeStatus.Trim() + " | " + this.HireDate.Trim() + "|";
+        retStr += this.TerminationDate.Trim() + " | " + this.TerminationType + " | " + this.Department.Trim() + " | " + this.Division.Trim() + " | " + this.JobClass.Trim() + "|";
+        retStr += this.JobTitle.Trim() + " | " + this.MaritalStatus.Trim() + " | " + this.MaritalDate.Trim() + " | " + this.MaritalLocation.Trim() + "|";
+        retStr += this.StudentStatus.Trim() + " | " + this.ScheduledHours.Trim() + " | " + this.SickHours.Trim() + " | " + this.PersonalHours.Trim() + "|";
+        retStr += this.W2Wages.Trim() + " | " + this.PayCycle.Trim() + " | " + this.PayPeriods.Trim() + " | " + this.CostFactor.Trim() + "|";
+        retStr += this.TobaccoUser.Trim() + " | " + this.Disabled.Trim() + " | " + this.MedicareADate.Trim() + " | " + this.MedicareBDate.Trim() + "|";
+        retStr += this.MedicareCDate.Trim() + " | " + this.MedicareDDate.Trim() + " | " + this.MedicalPCPName.Trim() + " | " + this.MedicalPCPID.Trim() + "|";
+        retStr += this.DentalPCPName.Trim() + " | " + this.DentalPCPID.Trim() + " | " + this.IPANumber.Trim() + " | " + this.OBGYN.Trim() + "|";
+        retStr += this.BenefitEligibleDate.Trim() + " | " + this.UnlockEnrollmentDate.Trim() + " | " + this.OriginalEffectiveDateInfo.Trim() + "|";
+        retStr += this.SubscriberKey.Trim() + " | " + this.PlanType.Trim() + " | " + this.PlanEffectiveStartDate.Trim() + "|";
+        retStr += this.PlanEffectiveEndDate.Trim() + " | " + this.PlanAdminName.Trim() + " | " + this.PlanDisplayName.Trim() + " | " + this.PlanImportID.Trim() + "|";
+        retStr += this.EffectiveDate.Trim() + " | " + this.ActivityDate.Trim() + " | " + this.BenefitCompensationAmount.Trim() + "|";
+        retStr += this.BenefitCompensationType.Trim() + " | " + this.CoverageDetails.Trim() + " | " + this.ElectionStatus.Trim() + "|";
+        retStr += this.ProcessedDate.Trim() + " | " + this.RiderCodes.Trim() + " | " + this.Action.Trim() + " | " + this.WaiveReason.Trim() + "|";
+        retStr += this.PolicyNumber.Trim() + " | " + this.SubgroupNumber.Trim() + " | " + this.AgeDetermination.Trim() + " | " + this.Carrier.Trim() + "|";
+        retStr += this.TotalRate.Trim() + " | " + this.EmployeeRate.Trim() + " | " + this.SpouseRate.Trim() + " | " + this.ChildrenRate.Trim() + "|";
+        retStr += this.EmployeeContribution.Trim() + " | " + this.EmployeePreTaxCost.Trim() + " | " + this.EmployeePostTaxCost.Trim() + "|";
+        retStr += this.EmployeeCostPerDeductionPeriod.Trim() + " | " + EmployerContribution.Trim() + " | " + EmployerCostPerDeductionPeriod.Trim() + "|";
+        retStr += this.PlanDeductionCycle.Trim() + " | " + this.LastModifiedDate.Trim();
+        retStr += this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim();// + " | " + this.NewBusiness.Trim();
+        retStr += waVSPcode.Trim();
 
         return retStr.Replace("  ", " ").Trim();
     }
@@ -325,6 +344,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.EmployeeStatus).Name("Employee Status").ToString().Trim();
         this.Map(m => m.HireDate).Name("Hire Date").ToString().Trim();
         this.Map(m => m.TerminationDate).Name("Termination Date").ToString().Trim();
+        this.Map(m => m.TerminationType).Name("Termination Type").ToString().Trim();
         this.Map(m => m.Department).Name("Department").ToString().Trim();
         this.Map(m => m.Division).Name("Division").ToString().Trim();
         this.Map(m => m.JobClass).Name("Job Class").ToString().Trim();
@@ -384,6 +404,8 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.EmployeePreTaxCost).Name("Employee Pre-Tax Cost").ToString().Trim();
         this.Map(m => m.EmployeePostTaxCost).Name("Employee Post-Tax Cost").ToString().Trim();
         this.Map(m => m.EmployeeCostPerDeductionPeriod).Name("Employee Cost Per Deduction Period").ToString().Trim();
+        this.Map(m => m.EmployerContribution).Name("Employer Contribution").ToString().Trim();
+        this.Map(m => m.EmployerCostPerDeductionPeriod).Name("Employer Cost Per Deduction Period").ToString().Trim();
         this.Map(m => m.PlanDeductionCycle).Name("Plan Deduction Cycle").ToString().Trim();
         this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
         this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
@@ -399,198 +421,282 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
 
     public static void WriteHeader(ExcelWorksheet worksheet) {
         if (worksheet.Cells[1, 1].Value != null)
-            worksheet.Cells[1, 1].Value = "Changes";
+            worksheet.Cells[1, 1].Value = "Company Name";
+
         if (worksheet.Cells[1, 2].Value != null)
-            worksheet.Cells[1, 2].Value = "Company Name";
+            worksheet.Cells[1, 2].Value = "EID";
+
         if (worksheet.Cells[1, 3].Value != null)
-            worksheet.Cells[1, 3].Value = "EID";
+            worksheet.Cells[1, 3].Value = "Location";
+
         if (worksheet.Cells[1, 4].Value != null)
-            worksheet.Cells[1, 4].Value = "Location";
+            worksheet.Cells[1, 4].Value = "First Name";
+
         if (worksheet.Cells[1, 5].Value != null)
-            worksheet.Cells[1, 5].Value = "First Name";
+            worksheet.Cells[1, 5].Value = "Middle Name";
+
         if (worksheet.Cells[1, 6].Value != null)
-            worksheet.Cells[1, 6].Value = "Middle Name";
+            worksheet.Cells[1, 6].Value = "Last Name";
+
         if (worksheet.Cells[1, 7].Value != null)
-            worksheet.Cells[1, 7].Value = "Last Name";
+            worksheet.Cells[1, 7].Value = "Relationship";
+
         if (worksheet.Cells[1, 8].Value != null)
-            worksheet.Cells[1, 8].Value = "Relationship";
+            worksheet.Cells[1, 8].Value = "Relationship Code";
+
         if (worksheet.Cells[1, 9].Value != null)
-            worksheet.Cells[1, 9].Value = "Relationship Code";
+            worksheet.Cells[1, 9].Value = "SSN";
+
         if (worksheet.Cells[1, 10].Value != null)
-            worksheet.Cells[1, 10].Value = "SSN";
+            worksheet.Cells[1, 10].Value = "Sex";
+
         if (worksheet.Cells[1, 11].Value != null)
-            worksheet.Cells[1, 11].Value = "Sex";
+            worksheet.Cells[1, 11].Value = "Birth Date";
+
         if (worksheet.Cells[1, 12].Value != null)
-            worksheet.Cells[1, 12].Value = "Birth Date";
+            worksheet.Cells[1, 12].Value = "Race";
+
         if (worksheet.Cells[1, 13].Value != null)
-            worksheet.Cells[1, 13].Value = "Race";
+            worksheet.Cells[1, 13].Value = "Citizenship";
+
         if (worksheet.Cells[1, 14].Value != null)
-            worksheet.Cells[1, 14].Value = "Citizenship";
+            worksheet.Cells[1, 14].Value = "Address 1";
+
         if (worksheet.Cells[1, 15].Value != null)
-            worksheet.Cells[1, 15].Value = "Address 1";
+            worksheet.Cells[1, 15].Value = "Address 2";
+
         if (worksheet.Cells[1, 16].Value != null)
-            worksheet.Cells[1, 16].Value = "Address 2";
+            worksheet.Cells[1, 16].Value = "City";
+
         if (worksheet.Cells[1, 17].Value != null)
-            worksheet.Cells[1, 17].Value = "City";
+            worksheet.Cells[1, 17].Value = "State";
+
         if (worksheet.Cells[1, 18].Value != null)
-            worksheet.Cells[1, 18].Value = "State";
+            worksheet.Cells[1, 18].Value = "Zip";
+
         if (worksheet.Cells[1, 19].Value != null)
-            worksheet.Cells[1, 19].Value = "Zip";
+            worksheet.Cells[1, 19].Value = "County";
+
         if (worksheet.Cells[1, 20].Value != null)
-            worksheet.Cells[1, 20].Value = "County";
+            worksheet.Cells[1, 20].Value = "Country";
+
         if (worksheet.Cells[1, 21].Value != null)
-            worksheet.Cells[1, 21].Value = "Country";
+            worksheet.Cells[1, 21].Value = "Personal Phone";
+
         if (worksheet.Cells[1, 22].Value != null)
-            worksheet.Cells[1, 22].Value = "Personal Phone";
+            worksheet.Cells[1, 22].Value = "Work Phone";
+
         if (worksheet.Cells[1, 23].Value != null)
-            worksheet.Cells[1, 23].Value = "Work Phone";
+            worksheet.Cells[1, 23].Value = "Mobile Phone";
+
         if (worksheet.Cells[1, 24].Value != null)
-            worksheet.Cells[1, 24].Value = "Mobile Phone";
+            worksheet.Cells[1, 24].Value = "Email";
+
         if (worksheet.Cells[1, 25].Value != null)
-            worksheet.Cells[1, 25].Value = "Email";
+            worksheet.Cells[1, 25].Value = "Personal Email";
+
         if (worksheet.Cells[1, 26].Value != null)
-            worksheet.Cells[1, 26].Value = "Personal Email";
+            worksheet.Cells[1, 26].Value = "Employee Type";
+
         if (worksheet.Cells[1, 27].Value != null)
-            worksheet.Cells[1, 27].Value = "Employee Type";
+            worksheet.Cells[1, 27].Value = "Employee Status";
+
         if (worksheet.Cells[1, 28].Value != null)
-            worksheet.Cells[1, 28].Value = "Employee Status";
+            worksheet.Cells[1, 28].Value = "Hire Date";
+
         if (worksheet.Cells[1, 29].Value != null)
-            worksheet.Cells[1, 29].Value = "Hire Date";
+            worksheet.Cells[1, 29].Value = "Termination Date";
+
         if (worksheet.Cells[1, 30].Value != null)
-            worksheet.Cells[1, 30].Value = "Termination Date";
+            worksheet.Cells[1, 30].Value = "Department";
+
         if (worksheet.Cells[1, 31].Value != null)
-            worksheet.Cells[1, 31].Value = "Department";
+            worksheet.Cells[1, 31].Value = "Division";
+
         if (worksheet.Cells[1, 32].Value != null)
-            worksheet.Cells[1, 32].Value = "Division";
+            worksheet.Cells[1, 32].Value = "Job Class";
+
         if (worksheet.Cells[1, 33].Value != null)
-            worksheet.Cells[1, 33].Value = "Job Class";
+            worksheet.Cells[1, 33].Value = "Job Title";
+
         if (worksheet.Cells[1, 34].Value != null)
-            worksheet.Cells[1, 34].Value = "Job Title";
+            worksheet.Cells[1, 34].Value = "Marital Status";
+
         if (worksheet.Cells[1, 35].Value != null)
-            worksheet.Cells[1, 35].Value = "Marital Status";
+            worksheet.Cells[1, 35].Value = "Marital Date";
+
         if (worksheet.Cells[1, 36].Value != null)
-            worksheet.Cells[1, 36].Value = "Marital Date";
+            worksheet.Cells[1, 36].Value = "Marital Location";
+
         if (worksheet.Cells[1, 37].Value != null)
-            worksheet.Cells[1, 37].Value = "Marital Location";
+            worksheet.Cells[1, 37].Value = "Student Status";
+
         if (worksheet.Cells[1, 38].Value != null)
-            worksheet.Cells[1, 38].Value = "Student Status";
+            worksheet.Cells[1, 38].Value = "Scheduled Hours";
+
         if (worksheet.Cells[1, 39].Value != null)
-            worksheet.Cells[1, 39].Value = "Scheduled Hours";
+            worksheet.Cells[1, 39].Value = "Sick Hours";
+
         if (worksheet.Cells[1, 40].Value != null)
-            worksheet.Cells[1, 40].Value = "Sick Hours";
+            worksheet.Cells[1, 40].Value = "Personal Hours";
+
         if (worksheet.Cells[1, 41].Value != null)
-            worksheet.Cells[1, 41].Value = "Personal Hours";
+            worksheet.Cells[1, 41].Value = "W2 Wages";
+
         if (worksheet.Cells[1, 42].Value != null)
-            worksheet.Cells[1, 42].Value = "W2 Wages";
+            worksheet.Cells[1, 42].Value = "Pay Cycle";
+
         if (worksheet.Cells[1, 43].Value != null)
-            worksheet.Cells[1, 43].Value = "Compensation";
+            worksheet.Cells[1, 43].Value = "Pay Periods";
+
         if (worksheet.Cells[1, 44].Value != null)
-            worksheet.Cells[1, 44].Value = "Compensation Type";
+            worksheet.Cells[1, 44].Value = "Cost Factor";
+
         if (worksheet.Cells[1, 45].Value != null)
-            worksheet.Cells[1, 45].Value = "Pay Cycle";
+            worksheet.Cells[1, 45].Value = "Tobacco User";
+
         if (worksheet.Cells[1, 46].Value != null)
-            worksheet.Cells[1, 46].Value = "Pay Periods";
+            worksheet.Cells[1, 46].Value = "Disabled";
+
         if (worksheet.Cells[1, 47].Value != null)
-            worksheet.Cells[1, 47].Value = "Cost Factor";
+            worksheet.Cells[1, 47].Value = "Medicare A Date";
+
         if (worksheet.Cells[1, 48].Value != null)
-            worksheet.Cells[1, 48].Value = "Tobacco User";
+            worksheet.Cells[1, 48].Value = "Medicare B Date";
+
         if (worksheet.Cells[1, 49].Value != null)
-            worksheet.Cells[1, 49].Value = "Disabled";
+            worksheet.Cells[1, 49].Value = "Medicare C Date";
+
         if (worksheet.Cells[1, 50].Value != null)
-            worksheet.Cells[1, 50].Value = "Medicare A Date";
+            worksheet.Cells[1, 50].Value = "Medicare D Date";
+
         if (worksheet.Cells[1, 51].Value != null)
-            worksheet.Cells[1, 51].Value = "Medicare B Date";
+            worksheet.Cells[1, 51].Value = "Medical PCP Name";
+
         if (worksheet.Cells[1, 52].Value != null)
-            worksheet.Cells[1, 52].Value = "Medicare C Date";
+            worksheet.Cells[1, 52].Value = "Medical PCP ID";
+
         if (worksheet.Cells[1, 53].Value != null)
-            worksheet.Cells[1, 53].Value = "Medicare D Date";
+            worksheet.Cells[1, 53].Value = "Dental PCP Name";
+
         if (worksheet.Cells[1, 54].Value != null)
-            worksheet.Cells[1, 54].Value = "Medical PCP Name";
+            worksheet.Cells[1, 54].Value = "Dental PCP ID";
+
         if (worksheet.Cells[1, 55].Value != null)
-            worksheet.Cells[1, 55].Value = "Medical PCP ID";
+            worksheet.Cells[1, 55].Value = "IPA Number";
+
         if (worksheet.Cells[1, 56].Value != null)
-            worksheet.Cells[1, 56].Value = "Dental PCP Name";
+            worksheet.Cells[1, 56].Value = "OBGYN";
+
         if (worksheet.Cells[1, 57].Value != null)
-            worksheet.Cells[1, 57].Value = "Dental PCP ID";
+            worksheet.Cells[1, 57].Value = "Benefit Eligible Date";
+
         if (worksheet.Cells[1, 58].Value != null)
-            worksheet.Cells[1, 58].Value = "IPA Number";
+            worksheet.Cells[1, 58].Value = "Unlock Enrollment Date";
+
         if (worksheet.Cells[1, 59].Value != null)
-            worksheet.Cells[1, 59].Value = "OBGYN";
+            worksheet.Cells[1, 59].Value = "Original Effective Date Info";
+
         if (worksheet.Cells[1, 60].Value != null)
-            worksheet.Cells[1, 60].Value = "Benefit Eligible Date";
+            worksheet.Cells[1, 60].Value = "Subscriber Key";
+
         if (worksheet.Cells[1, 61].Value != null)
-            worksheet.Cells[1, 61].Value = "Unlock Enrollment Date";
+            worksheet.Cells[1, 61].Value = "Plan Type";
+
         if (worksheet.Cells[1, 62].Value != null)
-            worksheet.Cells[1, 62].Value = "Original Effective Date Info";
+            worksheet.Cells[1, 62].Value = "Plan Effective Start Date";
+
         if (worksheet.Cells[1, 63].Value != null)
-            worksheet.Cells[1, 63].Value = "Subscriber Key";
+            worksheet.Cells[1, 63].Value = "Plan Effective End Date";
+
         if (worksheet.Cells[1, 64].Value != null)
-            worksheet.Cells[1, 64].Value = "Plan Type";
+            worksheet.Cells[1, 64].Value = "Plan Admin Name";
+
         if (worksheet.Cells[1, 65].Value != null)
-            worksheet.Cells[1, 65].Value = "Plan Effective Start Date";
+            worksheet.Cells[1, 65].Value = "Plan Display Name";
+
         if (worksheet.Cells[1, 66].Value != null)
-            worksheet.Cells[1, 66].Value = "Plan Effective End Date";
+            worksheet.Cells[1, 66].Value = "Plan Import ID";
+
         if (worksheet.Cells[1, 67].Value != null)
-            worksheet.Cells[1, 67].Value = "Plan Admin Name";
+            worksheet.Cells[1, 67].Value = "Effective Date";
+
         if (worksheet.Cells[1, 68].Value != null)
-            worksheet.Cells[1, 68].Value = "Plan Display Name";
+            worksheet.Cells[1, 68].Value = "Activity Date";
+
         if (worksheet.Cells[1, 69].Value != null)
-            worksheet.Cells[1, 69].Value = "Plan Import ID";
+            worksheet.Cells[1, 69].Value = "Benefit Compensation Amount";
+
         if (worksheet.Cells[1, 70].Value != null)
-            worksheet.Cells[1, 70].Value = "Effective Date";
+            worksheet.Cells[1, 70].Value = "Benefit Compensation Type";
+
         if (worksheet.Cells[1, 71].Value != null)
-            worksheet.Cells[1, 71].Value = "Activity Date";
+            worksheet.Cells[1, 71].Value = "Coverage Details";
+
         if (worksheet.Cells[1, 72].Value != null)
-            worksheet.Cells[1, 72].Value = "Coverage Details";
+            worksheet.Cells[1, 72].Value = "Election Status";
+
         if (worksheet.Cells[1, 73].Value != null)
-            worksheet.Cells[1, 73].Value = "Election Status";
+            worksheet.Cells[1, 73].Value = "Processed Date";
+
         if (worksheet.Cells[1, 74].Value != null)
-            worksheet.Cells[1, 74].Value = "Processed Date";
+            worksheet.Cells[1, 74].Value = "Rider Codes";
+
         if (worksheet.Cells[1, 75].Value != null)
-            worksheet.Cells[1, 75].Value = "Rider Codes";
+            worksheet.Cells[1, 75].Value = "Action";
+
         if (worksheet.Cells[1, 76].Value != null)
-            worksheet.Cells[1, 76].Value = "Action";
+            worksheet.Cells[1, 76].Value = "Waive Reason";
+
         if (worksheet.Cells[1, 77].Value != null)
-            worksheet.Cells[1, 77].Value = "Waive Reason";
+            worksheet.Cells[1, 77].Value = "Policy Number";
+
         if (worksheet.Cells[1, 78].Value != null)
-            worksheet.Cells[1, 78].Value = "Policy Number";
+            worksheet.Cells[1, 78].Value = "Subgroup Number";
+
         if (worksheet.Cells[1, 79].Value != null)
-            worksheet.Cells[1, 79].Value = "Subgroup Number";
+            worksheet.Cells[1, 79].Value = "Age Determination";
+
         if (worksheet.Cells[1, 80].Value != null)
-            worksheet.Cells[1, 80].Value = "Age Determination";
+            worksheet.Cells[1, 80].Value = "Carrier";
+
         if (worksheet.Cells[1, 81].Value != null)
-            worksheet.Cells[1, 81].Value = "Carrier";
+            worksheet.Cells[1, 81].Value = "Total Rate";
+
         if (worksheet.Cells[1, 82].Value != null)
-            worksheet.Cells[1, 82].Value = "Total Rate";
+            worksheet.Cells[1, 82].Value = "Employee Rate";
+
         if (worksheet.Cells[1, 83].Value != null)
-            worksheet.Cells[1, 83].Value = "Employee Rate";
+            worksheet.Cells[1, 83].Value = "Spouse Rate";
+
         if (worksheet.Cells[1, 84].Value != null)
-            worksheet.Cells[1, 84].Value = "Spouse Rate";
+            worksheet.Cells[1, 84].Value = "Children Rate";
+
         if (worksheet.Cells[1, 85].Value != null)
-            worksheet.Cells[1, 85].Value = "Children Rate";
+            worksheet.Cells[1, 85].Value = "Employee Contribution";
+
         if (worksheet.Cells[1, 86].Value != null)
-            worksheet.Cells[1, 86].Value = "Employee Contribution";
+            worksheet.Cells[1, 86].Value = "Employee Pre-Tax Cost";
+
         if (worksheet.Cells[1, 87].Value != null)
-            worksheet.Cells[1, 87].Value = "Employee Pre-Tax Cost";
+            worksheet.Cells[1, 87].Value = "Employee Post-Tax Cost";
+
         if (worksheet.Cells[1, 88].Value != null)
-            worksheet.Cells[1, 88].Value = "Employee Post-Tax Cost";
+            worksheet.Cells[1, 88].Value = "Employee Cost Per Deduction Period";
+
         if (worksheet.Cells[1, 89].Value != null)
-            worksheet.Cells[1, 89].Value = "Employee Cost Per Deduction Period";
+            worksheet.Cells[1, 89].Value = "Plan Deduction Cycle";
+
         if (worksheet.Cells[1, 90].Value != null)
-            worksheet.Cells[1, 90].Value = "Plan Deduction Cycle";
+            worksheet.Cells[1, 90].Value = "Last Modified Date";
+
         if (worksheet.Cells[1, 91].Value != null)
-            worksheet.Cells[1, 91].Value = "Last Modified Date";
+            worksheet.Cells[1, 91].Value = "Last Modified By";
+
         if (worksheet.Cells[1, 92].Value != null)
-            worksheet.Cells[1, 92].Value = "Last Modified By";
+            worksheet.Cells[1, 92].Value = "E-Sign Date";
+
         if (worksheet.Cells[1, 93].Value != null)
-            worksheet.Cells[1, 93].Value = "E-Sign Date";
-        if (worksheet.Cells[1, 94].Value != null)
-            worksheet.Cells[1, 94].Value = "CalPERS ID";
-        if (worksheet.Cells[1, 95].Value != null)
-            worksheet.Cells[1, 95].Value = "Enrolled By";
-        if (worksheet.Cells[1, 96].Value != null)
-            worksheet.Cells[1, 96].Value = "New Business";
-        if (worksheet.Cells[1, 97].Value != null)
-            worksheet.Cells[1, 97].Value = "VSP Code";
+            worksheet.Cells[1, 93].Value = "Enrolled By";
     }
 }
