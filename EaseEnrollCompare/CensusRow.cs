@@ -3,7 +3,6 @@ using OfficeOpenXml;
 using System;
 
 public class CensusRow {
-    public string Changes { get; set; }
     public string CompanyName { get; set; }
     public string EID { get; set; }
     public string Location { get; set; }
@@ -24,6 +23,7 @@ public class CensusRow {
     public string Zip { get; set; }
     public string County { get; set; }
     public string Country { get; set; }
+    public string MailingAddress { get; set; }
     public string PersonalPhone { get; set; }
     public string WorkPhone { get; set; }
     public string MobilePhone { get; set; }
@@ -48,6 +48,7 @@ public class CensusRow {
     public string W2Wages { get; set; }
     public string PayCycle { get; set; }
     public string PayPeriods { get; set; }
+    public string PayrollId { get; set; }
     public string CostFactor { get; set; }
     public string TobaccoUser { get; set; }
     public string Disabled { get; set; }
@@ -90,20 +91,20 @@ public class CensusRow {
     public string SpouseRate { get; set; }
     public string ChildrenRate { get; set; }
     public string EmployeeContribution { get; set; }
-    public string EmployeePreTaxCost { get; set; }
+    public string EmployeePreTaxCost {get; set;}
     public string EmployeePostTaxCost { get; set; }
     public string EmployeeCostPerDeductionPeriod { get; set; }
-    public string EmployerCostPerDeductionPeriod { get; set; }
     public string EmployerContribution { get; set; }
+    public string EmployerCostPerDeductionPeriod { get; set; }
     public string PlanDeductionCycle { get; set; }
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    public string EnrolledBy { get; set; }
-    public string NewBusiness { get; set; }
+    public string Changes { get; set; }
     public string VSPCode { get; set; }
+    public string EnrolledBy { get; set; }
 
-
+    //public string HSAYTDasof4/ 30 { get; set; }
     public bool Compare(CensusRow rhs, bool basic) {
         bool matched = true;
 
@@ -335,6 +336,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.Zip).Name("Zip").ToString().Trim();
         this.Map(m => m.County).Name("County").ToString().Trim();
         this.Map(m => m.Country).Name("Country").ToString().Trim();
+        this.Map(m => m.MailingAddress).Name("Mailing Address").ToString().Trim();
         this.Map(m => m.PersonalPhone).Name("Personal Phone").ToString().Trim();
         this.Map(m => m.WorkPhone).Name("Work Phone").ToString().Trim();
         this.Map(m => m.MobilePhone).Name("Mobile Phone").ToString().Trim();
@@ -357,10 +359,9 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.SickHours).Name("Sick Hours").ToString().Trim();
         this.Map(m => m.PersonalHours).Name("Personal Hours").ToString().Trim();
         this.Map(m => m.W2Wages).Name("W2 Wages").ToString().Trim();
-        this.Map(m => m.BenefitCompensationAmount).Name("Benefit Compensation Amount").ToString().Trim();
-        this.Map(m => m.BenefitCompensationType).Name("Benefit Compensation Type").ToString().Trim();
         this.Map(m => m.PayCycle).Name("Pay Cycle").ToString().Trim();
         this.Map(m => m.PayPeriods).Name("Pay Periods").ToString().Trim();
+        this.Map(m => m.PayrollId).Name("Payroll Id").ToString().Trim();
         this.Map(m => m.CostFactor).Name("Cost Factor").ToString().Trim();
         this.Map(m => m.TobaccoUser).Name("Tobacco User").ToString().Trim();
         this.Map(m => m.Disabled).Name("Disabled").ToString().Trim();
@@ -386,6 +387,8 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.PlanImportID).Name("Plan Import ID").ToString().Trim();
         this.Map(m => m.EffectiveDate).Name("Effective Date").ToString().Trim();
         this.Map(m => m.ActivityDate).Name("Activity Date").ToString().Trim();
+        this.Map(m => m.BenefitCompensationAmount).Name("Benefit Compensation Amount").ToString().Trim();
+        this.Map(m => m.BenefitCompensationType).Name("Benefit Compensation Type").ToString().Trim();
         this.Map(m => m.CoverageDetails).Name("Coverage Details").ToString().Trim();
         this.Map(m => m.ElectionStatus).Name("Election Status").ToString().Trim();
         this.Map(m => m.ProcessedDate).Name("Processed Date").ToString().Trim();
@@ -410,9 +413,9 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
         this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
         this.Map(m => m.ESignDate).Name("E-Sign Date").ToString().Trim();
-        //this.Map(m => m.CalPERSID).Name("CalPERS ID").ToString().Trim();
+        //this.Map(m => m.HSAYTDasof4 / 30).Name("HSA YTD as of 4/30").ToString().Trim();
+
         this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
-        this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();
         this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
 
         // Map(m => m.EnrolledBy).Name("Enrolled By");
