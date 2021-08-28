@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using System;
 
 public class CensusRow {
+    public string Changes { get; set; }
     public string CompanyName { get; set; }
     public string EID { get; set; }
     public string Location { get; set; }
@@ -100,7 +101,6 @@ public class CensusRow {
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    public string Changes { get; set; }
     public string VSPCode { get; set; }
     public string EnrolledBy { get; set; }
 
