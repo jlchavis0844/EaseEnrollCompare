@@ -508,7 +508,9 @@ namespace EaseEnrollCompare {
         }
 
         private void btnDropData_Click(object sender, EventArgs e) {
+            int counter = 0;
             List<CensusRow> newDrops = new List<CensusRow>();
+
             foreach (var rec in Drops) {
 
                 //var tempRec = OriginalNewRecords.Where(x =>
@@ -526,6 +528,7 @@ namespace EaseEnrollCompare {
                // }
 
                 if (tempRec == null) {
+                    counter++;
                     string tMsg = string.Empty;
                     //if (!MissingTermEIDs.Contains(rec.EID)) {
                         tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
@@ -539,7 +542,9 @@ namespace EaseEnrollCompare {
                             tMsg += "Found Missing Term using SSN.\nProbable EID Change";
                             //MessageBox.Show("Found Missing Term using SSN.\nProbable EID Change");
                         }
-                        MessageBox.Show(tMsg);
+                        if (counter < 10)
+                            MessageBox.Show(tMsg);
+                    Console.WriteLine(tMsg);
                         continue;
                     //}
                 }
@@ -554,7 +559,9 @@ namespace EaseEnrollCompare {
                 newDrops.Add(tempRec);
             }
 
-
+            if(counter > 0) {
+                MessageBox.Show("missing terms = " + counter);
+            }
             
 
             var totalOut = NewRecords.Concat(newDrops);
