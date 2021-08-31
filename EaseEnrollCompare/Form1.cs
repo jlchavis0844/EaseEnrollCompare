@@ -717,6 +717,7 @@ namespace EaseEnrollCompare {
             dt.Columns[95].ColumnName = "Last Modified Date";
             dt.Columns[96].ColumnName = "Last Modified By";
             dt.Columns[97].ColumnName = "E-Sign Date";
+            dt.Columns[98].ColumnName = "VSP Code";
 
 
 

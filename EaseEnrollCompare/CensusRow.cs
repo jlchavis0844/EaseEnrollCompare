@@ -124,8 +124,14 @@ public class CensusRow {
             rhs.Changes = string.Empty;
 
         if (this.ToString() != rhs.ToString()) {
-
             matched = false;
+
+            if (!this.LastName.Trim().Equals(rhs.LastName.Trim())) {
+                rhs.Changes = this.Changes = this.Changes + "Last Name (" + rhs.LastName + "->" + this.LastName + ")|";
+            }
+            if (this.SSN.Trim() != rhs.SSN.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|SSN|";
+            }
             if (this.SSN.Trim() != rhs.SSN.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|SSN|";
             }
@@ -181,7 +187,7 @@ public class CensusRow {
                 rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
             if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails|";
+                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails (" + rhs.CoverageDetails + "->" + this.CoverageDetails + ")|";
             }
             if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
                 if (!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
@@ -194,7 +200,7 @@ public class CensusRow {
                 }
             }
             if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus|";
+                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus (" + rhs.ElectionStatus + "->" + this.ElectionStatus + ")|"; ;
             }
             if (this.TotalRate.Trim() != rhs.TotalRate.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
