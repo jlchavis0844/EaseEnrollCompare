@@ -43,6 +43,8 @@
             this.btnDropData = new System.Windows.Forms.Button();
             this.dpActiveDateNew = new System.Windows.Forms.DateTimePicker();
             this.cbBasic = new System.Windows.Forms.CheckBox();
+            this.lBoxPlanType = new System.Windows.Forms.ListBox();
+            this.lblPlanLimit = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,7 +71,7 @@
             // lblOldFile
             // 
             this.lblOldFile.AutoSize = true;
-            this.lblOldFile.Location = new System.Drawing.Point(216, 41);
+            this.lblOldFile.Location = new System.Drawing.Point(28, 62);
             this.lblOldFile.Name = "lblOldFile";
             this.lblOldFile.Size = new System.Drawing.Size(91, 13);
             this.lblOldFile.TabIndex = 2;
@@ -78,7 +80,7 @@
             // lblNewFile
             // 
             this.lblNewFile.AutoSize = true;
-            this.lblNewFile.Location = new System.Drawing.Point(216, 111);
+            this.lblNewFile.Location = new System.Drawing.Point(28, 128);
             this.lblNewFile.Name = "lblNewFile";
             this.lblNewFile.Size = new System.Drawing.Size(97, 13);
             this.lblNewFile.TabIndex = 3;
@@ -264,11 +266,32 @@
             this.cbBasic.Text = "Basic Mode (EID, Type, Coverage only)";
             this.cbBasic.UseVisualStyleBackColor = true;
             // 
+            // lBoxPlanType
+            // 
+            this.lBoxPlanType.FormattingEnabled = true;
+            this.lBoxPlanType.Location = new System.Drawing.Point(568, 30);
+            this.lBoxPlanType.Name = "lBoxPlanType";
+            this.lBoxPlanType.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lBoxPlanType.Size = new System.Drawing.Size(220, 134);
+            this.lBoxPlanType.TabIndex = 20;
+            // 
+            // lblPlanLimit
+            // 
+            this.lblPlanLimit.AutoSize = true;
+            this.lblPlanLimit.Location = new System.Drawing.Point(620, 14);
+            this.lblPlanLimit.Name = "lblPlanLimit";
+            this.lblPlanLimit.Size = new System.Drawing.Size(145, 13);
+            this.lblPlanLimit.TabIndex = 21;
+            this.lblPlanLimit.Text = "Limit Compare To Only Below";
+            this.lblPlanLimit.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 700);
+            this.Controls.Add(this.lblPlanLimit);
+            this.Controls.Add(this.lBoxPlanType);
             this.Controls.Add(this.cbBasic);
             this.Controls.Add(this.dpActiveDateNew);
             this.Controls.Add(this.btnDropData);
@@ -319,6 +342,8 @@
         private System.Windows.Forms.Button btnDropData;
         private System.Windows.Forms.DateTimePicker dpActiveDateNew;
         private System.Windows.Forms.CheckBox cbBasic;
+        private System.Windows.Forms.ListBox lBoxPlanType;
+        private System.Windows.Forms.Label lblPlanLimit;
     }
 }
 

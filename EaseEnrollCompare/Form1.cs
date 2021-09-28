@@ -121,6 +121,8 @@ namespace EaseEnrollCompare {
                             }
                         }
                     }
+                    lBoxPlanType.DataSource = NewRecords.Select(x => x.PlanType).Distinct().ToList();
+                    lBoxPlanType.SelectedIndex = -1;
                 } else {
                     MessageBox.Show("No File loaded, Please try again", "NO FILE", MessageBoxButtons.OK);
                     btnLoadNew.Enabled = true;
@@ -166,7 +168,7 @@ namespace EaseEnrollCompare {
             btnDropData.Enabled = true;
             btnOutput.Enabled = true;
             dgvOutPut.DataSource = null;
-            
+
             Drops.Clear();
             Adds.Clear();
             output.Clear();
@@ -243,6 +245,18 @@ namespace EaseEnrollCompare {
             output.AddRange(Adds);
             output.AddRange(Drops);
             output.AddRange(Changes);
+
+            var selected = lBoxPlanType.SelectedItems;
+            var tempRecs = new List<CensusRow>();
+            if (lBoxPlanType.SelectedItems.Count > 0) {
+                foreach (var rec in output) {
+                    if (selected.Contains(rec.PlanType)) {
+                        tempRecs.Add(rec);
+                    }
+                }
+            }
+            output = tempRecs;
+
 
             dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType).ThenBy(o => o.EID).
                 ThenBy(o => o.RelationshipCode).ThenBy(o => o.FirstName).ToList();

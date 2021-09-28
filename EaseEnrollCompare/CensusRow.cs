@@ -129,11 +129,14 @@ public class CensusRow {
             if (!this.LastName.Trim().Equals(rhs.LastName.Trim())) {
                 rhs.Changes = this.Changes = this.Changes + "Last Name (" + rhs.LastName + "->" + this.LastName + ")|";
             }
-            if (this.SSN.Trim() != rhs.SSN.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|SSN|";
+            if (this.Location.Trim() != rhs.Location.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|Location|";
             }
             if (this.SSN.Trim() != rhs.SSN.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|SSN|";
+            }
+            if (this.BirthDate.Trim() != rhs.BirthDate.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|BirthDate|";
             }
             if (this.Address1.Trim() != rhs.Address1.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Address1|";
@@ -171,6 +174,9 @@ public class CensusRow {
             if (this.JobClass.Trim() != rhs.JobClass.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|JobClass|";
             }
+            if (this.JobTitle.Trim() != rhs.JobTitle.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|JobTitle|";
+            }
             if (this.Division.Trim() != rhs.Division.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Division|";
             }
@@ -183,6 +189,10 @@ public class CensusRow {
             if (this.PayCycle.Trim() != rhs.PayCycle.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
             }
+            if (this.CostFactor.Trim() != rhs.CostFactor.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|CostFactor|";
+            }
+
             if (this.PlanDisplayName.Trim() != rhs.PlanDisplayName.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
@@ -207,6 +217,9 @@ public class CensusRow {
             }
             if (this.EmployeeCostPerDeductionPeriod.Trim() != rhs.EmployeeCostPerDeductionPeriod.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
+            }
+            if (this.EmployerCostPerDeductionPeriod.Trim() != rhs.EmployerCostPerDeductionPeriod.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|EmployerCostPerDeductionPeriod|";
             }
             if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
                 if (!string.IsNullOrWhiteSpace(this.ESignDate) && !string.IsNullOrWhiteSpace(rhs.ESignDate)) {
