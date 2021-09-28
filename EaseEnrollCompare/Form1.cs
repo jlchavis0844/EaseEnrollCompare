@@ -247,16 +247,18 @@ namespace EaseEnrollCompare {
             output.AddRange(Changes);
 
             var selected = lBoxPlanType.SelectedItems;
-            var tempRecs = new List<CensusRow>();
-            if (lBoxPlanType.SelectedItems.Count > 0) {
-                foreach (var rec in output) {
-                    if (selected.Contains(rec.PlanType)) {
-                        tempRecs.Add(rec);
+
+            if (selected.Count > 0) {
+                var tempRecs = new List<CensusRow>();
+                if (lBoxPlanType.SelectedItems.Count > 0) {
+                    foreach (var rec in output) {
+                        if (selected.Contains(rec.PlanType)) {
+                            tempRecs.Add(rec);
+                        }
                     }
                 }
+                output = tempRecs;
             }
-            output = tempRecs;
-
 
             dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType).ThenBy(o => o.EID).
                 ThenBy(o => o.RelationshipCode).ThenBy(o => o.FirstName).ToList();
