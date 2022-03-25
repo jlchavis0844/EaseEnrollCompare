@@ -92,7 +92,7 @@ public class CensusRow {
     public string SpouseRate { get; set; }
     public string ChildrenRate { get; set; }
     public string EmployeeContribution { get; set; }
-    public string EmployeePreTaxCost {get; set;}
+    public string EmployeePreTaxCost { get; set; }
     public string EmployeePostTaxCost { get; set; }
     public string EmployeeCostPerDeductionPeriod { get; set; }
     public string EmployerContribution { get; set; }
@@ -103,15 +103,17 @@ public class CensusRow {
     public string ESignDate { get; set; }
     public string VSPCode { get; set; }
     public string EnrolledBy { get; set; }
+    public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
 
     //public string HSAYTDasof4/ 30 { get; set; }
     public bool Compare(CensusRow rhs, bool basic) {
+        this.flagged = false;
         bool matched = true;
 
         if (basic) {
             matched = (rhs.EID == this.EID && rhs.PlanType == this.PlanType && rhs.CoverageDetails == this.CoverageDetails);
             if (!matched) {
-                rhs.Changes = this.CoverageDetails + " => " + rhs.CoverageDetails;
+                rhs.Changes = this.CoverageDetails + " -> " + rhs.CoverageDetails;
                 return false;
             } else return matched;
         }
@@ -127,7 +129,7 @@ public class CensusRow {
             matched = false;
 
             if (!this.LastName.Trim().Equals(rhs.LastName.Trim())) {
-                rhs.Changes = this.Changes = this.Changes + "Last Name (" + rhs.LastName + "->" + this.LastName + ")|";
+                rhs.Changes = this.Changes = this.Changes + "Last Name (" + this.LastName + " -> " + rhs.LastName + ")|";
             }
             if (this.Location.Trim() != rhs.Location.Trim()) {
                 rhs.Changes = this.Changes = this.Changes + "|Location|";
@@ -197,9 +199,11 @@ public class CensusRow {
                 rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
             }
             if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails (" + rhs.CoverageDetails + "->" + this.CoverageDetails + ")|";
+                rhs.flagged = this.flagged = true;
+                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails (" + this.CoverageDetails + " -> " + rhs.CoverageDetails + ")|";
             }
             if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+                rhs.flagged = this.flagged = true;
                 if (!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
                     this.EffectiveDate = DateTime.Parse(this.EffectiveDate).ToString("MM/dd/yyyy");
                     rhs.EffectiveDate = DateTime.Parse(rhs.EffectiveDate).ToString("MM/dd/yyyy");
@@ -210,15 +214,19 @@ public class CensusRow {
                 }
             }
             if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus (" + rhs.ElectionStatus + "->" + this.ElectionStatus + ")|"; ;
+                rhs.flagged = this.flagged = true;
+                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus (" + this.ElectionStatus + " -> " + rhs.ElectionStatus + ")|"; ;
             }
             if (this.TotalRate.Trim() != rhs.TotalRate.Trim()) {
+                rhs.flagged = this.flagged = true;
                 rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
             }
             if (this.EmployeeCostPerDeductionPeriod.Trim() != rhs.EmployeeCostPerDeductionPeriod.Trim()) {
+                rhs.flagged = this.flagged = true;
                 rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
             }
             if (this.EmployerCostPerDeductionPeriod.Trim() != rhs.EmployerCostPerDeductionPeriod.Trim()) {
+                rhs.flagged = this.flagged = true;
                 rhs.Changes = this.Changes = this.Changes + "|EmployerCostPerDeductionPeriod|";
             }
             if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
@@ -293,6 +301,9 @@ public class CensusRow {
 
         if (BenefitCompensationType == null)
             BenefitCompensationType = string.Empty;
+
+        if (String.IsNullOrEmpty(this.Changes))
+            this.Changes = String.Empty;
 
         string waVSPcode = string.Empty;
         if (!string.IsNullOrWhiteSpace(this.VSPCode))

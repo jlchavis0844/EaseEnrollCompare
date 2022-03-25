@@ -1,19 +1,13 @@
 ﻿using CsvHelper;
+using ExtensionMethods;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using OfficeOpenXml;
-using System.Reflection;
-using ExtensionMethods;
 
 namespace EaseEnrollCompare {
     public partial class Form1 : Form {
@@ -36,11 +30,24 @@ namespace EaseEnrollCompare {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             InitializeComponent();
             dpActiveDateOld.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            cbAutoChanges.Checked = Properties.Settings.Default.OpenChangesFile;
+            cbOpenEDIData.Checked = Properties.Settings.Default.OpenDataOut;
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             // Log the exception, display it, etc
             MessageBox.Show((e.ExceptionObject as Exception).Message, "UNHANDLED EXCEPTION", MessageBoxButtons.OK);
+        }
+        static bool Junk(int myint) {
+            bool answer = myint % 2 == 0;
+            switch (answer) {
+                case true:
+                    return true;
+                case false:
+                    return false;
+                default:
+                    return Junk((int)Math.IEEERemainder(myint, 2));
+            }
         }
 
         private void btnLoadOld_Click(object sender, EventArgs e) {
@@ -165,12 +172,13 @@ namespace EaseEnrollCompare {
 
         private void btnCompare_Click(object sender, EventArgs e) {
             //btnCompare.Enabled = false;
-            btnDropData.Enabled = true;
+            btnOutputEDIdata.Enabled = true;
             btnOutput.Enabled = true;
             dgvOutPut.DataSource = null;
 
             Drops.Clear();
             Adds.Clear();
+            Changes.Clear();
             output.Clear();
 
             dgvOutPut.Update();
@@ -203,6 +211,7 @@ namespace EaseEnrollCompare {
                 if (matches.Count == 0) {
                     rec.Changes = "DROP";
                     rec.ElectionStatus = "DROP";
+                    rec.flagged = true;
                     Drops.Add(rec);
                 } else if (matches.Count > 1) {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
@@ -228,6 +237,7 @@ namespace EaseEnrollCompare {
                 if (matches.Count == 0) {
                     rec.Changes = "ADD";
                     rec.ElectionStatus = "ADD";
+                    rec.flagged = true;
                     Adds.Add(rec);
                 } else if (matches.Count > 1) {
                     MessageBox.Show("possible duplicate\n" + rec.ToString(), "Duplicate entry?", MessageBoxButtons.OK);
@@ -235,10 +245,17 @@ namespace EaseEnrollCompare {
             }
 
             var newDrops = new List<CensusRow>();
-            foreach(var drop in Drops) {
+            foreach (var drop in Drops) {
                 var tempDrop = drop;
-                tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN).ToList().First().EffectiveDate;
-                tempDrop.CoverageDetails = drop.CoverageDetails + " - TERMINATED";
+                var tList = OriginalNewRecords.Where(d => d.EID == tempDrop.EID && d.SSN == tempDrop.SSN && d.PlanType == tempDrop.PlanType).ToList();
+
+                string dropDate = string.Empty;
+                if (tList.Count > 0) {
+                    dropDate = " " + tList.First().EffectiveDate.ToString();
+                }
+
+                tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList().First().EffectiveDate;
+                tempDrop.CoverageDetails = drop.CoverageDetails + " - TERMINATED" + dropDate;
                 //tempDrop.ElectionStatus = "Terminated";
             }
 
@@ -260,7 +277,12 @@ namespace EaseEnrollCompare {
                 output = tempRecs;
             }
 
-            dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType).ThenBy(o => o.EID).
+            //check for flagged
+            if (cbFlagged.Checked) {
+                output = output.Where(f => f.flagged == true).ToList();
+            }
+
+            dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType)./*ThenBy(o => o.Changes).*/ThenBy(o => o.EID).
                 ThenBy(o => o.RelationshipCode).ThenBy(o => o.FirstName).ToList();
 
             foreach (var col in dgvOutPut.Columns) {
@@ -273,18 +295,24 @@ namespace EaseEnrollCompare {
         private void btnOutput_Click(object sender, EventArgs e) {
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             string OutputFile = string.Empty;
-            using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
-                string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
-                fbd.Description = "Select the directory to output files to";
-                fbd.SelectedPath = defaultPath;
-                fbd.ShowNewFolderButton = true;
 
-                // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
-                DialogResult result = fbd.ShowDialog();
-                if (result == DialogResult.OK) {
-                    OutputFile = fbd.SelectedPath;
+            if (cbAutoChanges.Checked == true) {
+                using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
+                    string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
+                    fbd.Description = "Select the directory to output files to";
+                    fbd.SelectedPath = defaultPath;
+                    fbd.ShowNewFolderButton = true;
+
+                    // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
+                    DialogResult result = fbd.ShowDialog();
+                    if (result == DialogResult.OK) {
+                        OutputFile = fbd.SelectedPath;
+                    }
                 }
+            } else {
+                OutputFile = Path.GetDirectoryName(NEWINPUTFILE);
             }
+
             if (OutputFile == string.Empty)
                 return;
 
@@ -340,7 +368,15 @@ namespace EaseEnrollCompare {
                     }
 
                     //MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
-                    System.Diagnostics.Process.Start(OutputFile);
+                    if (cbAutoChanges.Checked == true) {
+                        System.Diagnostics.Process.Start(OutputFile);
+                    } else {
+                        string text = "File Written to: \n" + OutputFile + "\nWould you like to open the file";
+                        var answer = MessageBox.Show(text, "File Written, Open?", MessageBoxButtons.YesNo);
+                        if(answer == DialogResult.Yes) {
+                            System.Diagnostics.Process.Start(OutputFile);
+                        }
+                    }
                 }
 
                 if (cbCSV.Checked) {
@@ -351,7 +387,16 @@ namespace EaseEnrollCompare {
 
                     File.Move(tempFile, OutputFile);
                     //MessageBox.Show("File written:\n" + OutputFile, "File written", MessageBoxButtons.OK);
-                    System.Diagnostics.Process.Start(OutputFile);
+
+                    if (cbAutoChanges.Checked == true) {
+                        System.Diagnostics.Process.Start(OutputFile);
+                    } else {
+                        string text = "File Written to: \n" + OutputFile + "\nWould you like to open the file";
+                        var answer = MessageBox.Show(text, "File Written, Open?", MessageBoxButtons.YesNo);
+                        if (answer == DialogResult.Yes) {
+                            System.Diagnostics.Process.Start(OutputFile);
+                        }
+                    }
                 } else {
                     if (File.Exists(tempFile)) {
                         File.Delete(tempFile);
@@ -430,6 +475,10 @@ namespace EaseEnrollCompare {
         private void btnReset_Click(object sender, EventArgs e) {
             OLDINPUTFILE = string.Empty;
             NEWINPUTFILE = string.Empty;
+
+            lBoxPlanType.DataSource = null;
+            lBoxPlanType.Items.Clear();
+
             OldLoaded = false;
             NewLoaded = false;
 
@@ -523,7 +572,7 @@ namespace EaseEnrollCompare {
             }
         }
 
-        private void btnDropData_Click(object sender, EventArgs e) {
+        private void btnOutputEDIdata_Click(object sender, EventArgs e) {
             int counter = 0;
             List<CensusRow> newDrops = new List<CensusRow>();
 
@@ -541,27 +590,27 @@ namespace EaseEnrollCompare {
                     x.EID == rec.EID && x.FirstName == rec.FirstName &&
                     x.SSN == rec.SSN && x.LastName == rec.LastName &&
                     x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
-               // }
+                // }
 
                 if (tempRec == null) {
                     counter++;
                     string tMsg = string.Empty;
                     //if (!MissingTermEIDs.Contains(rec.EID)) {
-                        tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
-                        //MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
-                        //MissingTermEIDs.Add(rec.EID);
+                    tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
+                    //MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
+                    //MissingTermEIDs.Add(rec.EID);
 
-                        tempRec = OriginalNewRecords.Where(x =>
-                            x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
+                    tempRec = OriginalNewRecords.Where(x =>
+                        x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
 
-                        if (tempRec != null) {
-                            tMsg += "Found Missing Term using SSN.\nProbable EID Change";
-                            //MessageBox.Show("Found Missing Term using SSN.\nProbable EID Change");
-                        }
-                        if (counter < 10)
-                            MessageBox.Show(tMsg);
+                    if (tempRec != null) {
+                        tMsg += "Found Missing Term using SSN.\nProbable EID Change";
+                        //MessageBox.Show("Found Missing Term using SSN.\nProbable EID Change");
+                    }
+                    if (counter < 10)
+                        MessageBox.Show(tMsg);
                     Console.WriteLine(tMsg);
-                        continue;
+                    continue;
                     //}
                 }
 
@@ -575,26 +624,30 @@ namespace EaseEnrollCompare {
                 newDrops.Add(tempRec);
             }
 
-            if(counter > 0) {
+            if (counter > 0) {
                 MessageBox.Show("missing terms = " + counter);
             }
-            
+
 
             var totalOut = NewRecords.Concat(newDrops);
             totalOut = totalOut.OrderBy(r => r.EID).ThenBy(r => r.RelationshipCode).ThenBy(r => r.FirstName).ToList();
 
             string OutputFile = string.Empty;
-            using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
-                string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
-                fbd.Description = "Select the directory to output files to";
-                fbd.SelectedPath = defaultPath;
-                fbd.ShowNewFolderButton = true;
+            if (cbOpenEDIData.Checked) {
+                using (FolderBrowserDialog fbd = new FolderBrowserDialog()) {
+                    string defaultPath = Path.GetDirectoryName(NEWINPUTFILE);
+                    fbd.Description = "Select the directory to output files to";
+                    fbd.SelectedPath = defaultPath;
+                    fbd.ShowNewFolderButton = true;
 
-                // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
-                DialogResult result = fbd.ShowDialog();
-                if (result == DialogResult.OK) {
-                    OutputFile = fbd.SelectedPath;
+                    // fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
+                    DialogResult result = fbd.ShowDialog();
+                    if (result == DialogResult.OK) {
+                        OutputFile = fbd.SelectedPath;
+                    }
                 }
+            } else {
+               OutputFile = Path.GetDirectoryName(NEWINPUTFILE);
             }
 
             if (OutputFile == string.Empty)
@@ -607,12 +660,12 @@ namespace EaseEnrollCompare {
                 DataTable dt = totalOut.ToList().ToDataTable();
                 RenameHeaders(dt);
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture)) {
-                    foreach(DataColumn col in dt.Columns){
+                    foreach (DataColumn col in dt.Columns) {
                         csv.WriteField(col.ColumnName);
                     }
                     csv.NextRecord();
 
-                    foreach(DataRow row in dt.Rows) {
+                    foreach (DataRow row in dt.Rows) {
                         for (var i = 0; i < dt.Columns.Count; i++) {
                             csv.WriteField(row[i]);
                         }
@@ -621,17 +674,25 @@ namespace EaseEnrollCompare {
                 }
             }
 
-            System.Diagnostics.Process.Start(OutputFile);
+            if (cbOpenEDIData.Checked) {
+                System.Diagnostics.Process.Start(OutputFile);
+            } else {
+                string text = "File Written to: \n" + OutputFile + "\nWould you like to open the file";
+                var answer = MessageBox.Show(text, "File Written, Open?", MessageBoxButtons.YesNo);
+                if (answer == DialogResult.Yes) {
+                    System.Diagnostics.Process.Start(OutputFile);
+                }
+            }
         }
 
         public static void RenameHeaders(DataTable dt) {
 
-            for(int i = 0; i < dt.Columns.Count; i++) {//rename to temp to avoid duplicating col names
+            for (int i = 0; i < dt.Columns.Count; i++) {//rename to temp to avoid duplicating col names
                 //Console.WriteLine(i + "\t" + dt.Columns[i].ColumnName);
                 dt.Columns[i].ColumnName = "Column" + i;
             }
 
-            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++){
+            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
                 Console.WriteLine(dt.Rows[1].ItemArray[i]);
             }
 
@@ -743,6 +804,18 @@ namespace EaseEnrollCompare {
             }
 
             Console.WriteLine("End Rename");
+        }
+
+        private void cbAutoChanges_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.OpenChangesFile = cbAutoChanges.Checked;
+            Properties.Settings.Default.Save();
+            Console.WriteLine("Changed cbAutoChanges to " + Properties.Settings.Default.OpenChangesFile);
+        }
+
+        private void cbOpenEDIData_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.OpenDataOut = cbOpenEDIData.Checked;
+            Properties.Settings.Default.Save();
+            Console.WriteLine("Changed cbOpenEDIData to " + Properties.Settings.Default.OpenChangesFile);
         }
     }
 }
