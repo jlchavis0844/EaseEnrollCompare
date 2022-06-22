@@ -73,7 +73,7 @@ namespace EaseEnrollCompare {
 
                             try {
                                 OriginalOldRecords = csv.GetRecords<CensusRow>().ToList();
-                                OldRecords = new List<CensusRow>(OriginalOldRecords);
+                                //OldRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
                                 Console.WriteLine(cnt + " lines removed");
@@ -85,10 +85,39 @@ namespace EaseEnrollCompare {
                             }
                         }
                     }
+
+                    loadedFile.Close();
+                    loadedFile = File.Open(OLDINPUTFILE, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite);
+
+                    using (var reader = new StreamReader(loadedFile)) {
+                        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
+                            csv.Configuration.HeaderValidated = null;
+                            csv.Configuration.HasHeaderRecord = true;
+                            csv.Configuration.MissingFieldFound = null;
+                            csv.Configuration.RegisterClassMap<CensusRowClassMap>();
+
+                            try {
+                                //OriginalOldRecords = csv.GetRecords<CensusRow>().ToList();
+                                OldRecords = csv.GetRecords<CensusRow>().ToList();
+
+                                int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
+                                Console.WriteLine(cnt + " lines removed");
+                                btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
+
+                            } catch (Exception ex) {
+                                Console.WriteLine(ex);
+                                ErrorMessage(ex);
+                            }
+                        }
+                    }
+
                 } else {
                     MessageBox.Show("No File loaded, Please try again", "NO FILE", MessageBoxButtons.OK);
                     btnLoadOld.Enabled = true;
                 }
+
+
             }
 
         }
@@ -116,7 +145,7 @@ namespace EaseEnrollCompare {
 
                             try {
                                 OriginalNewRecords = csv.GetRecords<CensusRow>().ToList();
-                                NewRecords = new List<CensusRow>(OriginalNewRecords);
+                                //NewRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
                                 Console.WriteLine(cnt + " lines removed");
@@ -128,6 +157,34 @@ namespace EaseEnrollCompare {
                             }
                         }
                     }
+
+
+                    loadedFile.Close();
+                    loadedFile = File.Open(NEWINPUTFILE, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite);
+
+                    using (var reader = new StreamReader(loadedFile)) {
+                        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture)) {
+                            csv.Configuration.HeaderValidated = null;
+                            csv.Configuration.HasHeaderRecord = true;
+                            csv.Configuration.MissingFieldFound = null;
+                            csv.Configuration.RegisterClassMap<CensusRowClassMap>();
+
+                            try {
+                                //OriginalNewRecords = csv.GetRecords<CensusRow>().ToList();
+                                NewRecords = csv.GetRecords<CensusRow>().ToList();
+
+                                int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
+                                Console.WriteLine(cnt + " lines removed");
+                                btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
+
+                            } catch (Exception ex) {
+                                Console.WriteLine(ex);
+                                ErrorMessage(ex);
+                            }
+                        }
+                    }
+
                     lBoxPlanType.DataSource = NewRecords.Select(x => x.PlanType).Distinct().ToList();
                     lBoxPlanType.SelectedIndex = -1;
                 } else {
@@ -182,6 +239,12 @@ namespace EaseEnrollCompare {
             output.Clear();
 
             dgvOutPut.Update();
+
+
+            if (cbEmpOnly.Checked) {
+                NewRecords.RemoveAll(r => r.RelationshipCode != "0");
+                OldRecords.RemoveAll(r => r.RelationshipCode != "0");
+            }
 
             NewRecords = (from rec in NewRecords
                           orderby rec.EID, rec.RelationshipCode, rec.FirstName
@@ -251,11 +314,17 @@ namespace EaseEnrollCompare {
 
                 string dropDate = string.Empty;
                 if (tList.Count > 0) {
-                    dropDate = " " + tList.First().EffectiveDate.ToString();
+                    dropDate = tList.First().EffectiveDate.ToString();
+                    tempDrop.EffectiveDate = dropDate;
                 }
 
+                var ogRec = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList();
+                var newRec = OriginalNewRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList();
+
                 tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList().First().EffectiveDate;
-                tempDrop.CoverageDetails = drop.CoverageDetails + " - TERMINATED" + dropDate;
+
+                if(!tempDrop.CoverageDetails.Contains("TERMINATED"))
+                    tempDrop.CoverageDetails = (drop.CoverageDetails + " - TERMINATED " + dropDate).Trim();
                 //tempDrop.ElectionStatus = "Terminated";
             }
 
@@ -316,7 +385,28 @@ namespace EaseEnrollCompare {
             if (OutputFile == string.Empty)
                 return;
 
-            OutputFile = OutputFile + @"\Changes_" +
+            var strTokens = new List<string>();
+            string initials = string.Empty;
+            string outputInitials = string.Empty;
+            var planType = output.Select(o => o.PlanType).Distinct();
+            var carriers = output.Select(c => c.Carrier).Distinct();
+
+            foreach (var plan in planType) {
+                initials = string.Empty;
+                strTokens = plan.Split(' ').ToList();
+                foreach(string token in strTokens) {
+                    initials += token[0];
+                }
+                outputInitials += '-' + initials;
+            }
+            outputInitials += "_";
+
+            string tempStr = string.Empty;
+            foreach (var carrier in carriers) {
+                tempStr += carrier.Replace(" ", "") + "_";
+            }
+
+            OutputFile = OutputFile + @"\Changes_" + outputInitials + tempStr +
                 DateTime.Now.ToString("MMddyyyy") + ".xlsx";
 
             string tempFile = Path.GetTempFileName();
@@ -617,7 +707,8 @@ namespace EaseEnrollCompare {
                 //tempRec.PlanEffectiveStartDate = rec.EffectiveDate; //during drops, Plan Effective Start Date is used for plan start and effective date is for term date
 
                 tempRec.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == rec.EID && d.SSN == rec.SSN).ToList().First().EffectiveDate;
-                tempRec.CoverageDetails = rec.CoverageDetails + " - TERMINATED";
+                //tempRec.CoverageDetails = rec.CoverageDetails + " - TERMINATED";
+                tempRec.CoverageDetails = rec.CoverageDetails;
                 tempRec.Changes = rec.Changes;
                 tempRec.ElectionStatus = rec.ElectionStatus;
 

@@ -48,6 +48,7 @@
             this.cbFlagged = new System.Windows.Forms.CheckBox();
             this.cbAutoChanges = new System.Windows.Forms.CheckBox();
             this.cbOpenEDIData = new System.Windows.Forms.CheckBox();
+            this.cbEmpOnly = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -326,11 +327,22 @@
             this.cbOpenEDIData.UseVisualStyleBackColor = true;
             this.cbOpenEDIData.CheckedChanged += new System.EventHandler(this.cbOpenEDIData_CheckedChanged);
             // 
+            // cbEmpOnly
+            // 
+            this.cbEmpOnly.AutoSize = true;
+            this.cbEmpOnly.Location = new System.Drawing.Point(236, 149);
+            this.cbEmpOnly.Name = "cbEmpOnly";
+            this.cbEmpOnly.Size = new System.Drawing.Size(96, 17);
+            this.cbEmpOnly.TabIndex = 25;
+            this.cbEmpOnly.Text = "Employee Only";
+            this.cbEmpOnly.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1422, 1053);
+            this.Controls.Add(this.cbEmpOnly);
             this.Controls.Add(this.cbOpenEDIData);
             this.Controls.Add(this.cbAutoChanges);
             this.Controls.Add(this.cbFlagged);
@@ -391,6 +403,7 @@
         private System.Windows.Forms.CheckBox cbFlagged;
         private System.Windows.Forms.CheckBox cbAutoChanges;
         private System.Windows.Forms.CheckBox cbOpenEDIData;
+        private System.Windows.Forms.CheckBox cbEmpOnly;
     }
 }
 
