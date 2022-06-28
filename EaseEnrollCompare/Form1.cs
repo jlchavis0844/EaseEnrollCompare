@@ -664,17 +664,12 @@ namespace EaseEnrollCompare {
 
         private void btnOutputEDIdata_Click(object sender, EventArgs e) {
             int counter = 0;
+            bool useOldRows = false;
+
             List<CensusRow> newDrops = new List<CensusRow>();
+            List<CensusRow> MissingTerms = new List<CensusRow>();
 
             foreach (var rec in Drops) {
-
-                //var tempRec = OriginalNewRecords.Where(x =>
-                //x.EID == rec.EID && x.FirstName == rec.FirstName &&
-                //x.SSN == rec.SSN && x.LastName == rec.LastName &&
-                //x.Relationship == rec.Relationship && x.PlanType == rec.PlanType).FirstOrDefault();
-                //var tempRec = OriginalNewRecords.Where(x =>
-                //x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
-
                 //if(tempRec == null) {
                 var tempRec = OriginalNewRecords.Where(x =>
                     x.EID == rec.EID && x.FirstName == rec.FirstName &&
@@ -686,9 +681,7 @@ namespace EaseEnrollCompare {
                     counter++;
                     string tMsg = string.Empty;
                     //if (!MissingTermEIDs.Contains(rec.EID)) {
-                    tMsg += "Could not find term record for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
-                    //MessageBox.Show("Could not find term record for\n" + rec.FirstName + " " + rec.LastName);
-                    //MissingTermEIDs.Add(rec.EID);
+                    tMsg += "Could not find term record in new file for\n" + rec.FirstName + " " + rec.LastName + "\n" + rec.PlanType;
 
                     tempRec = OriginalNewRecords.Where(x =>
                         x.SSN == rec.SSN && x.PlanType == rec.PlanType).FirstOrDefault();
@@ -697,10 +690,40 @@ namespace EaseEnrollCompare {
                         tMsg += "Found Missing Term using SSN.\nProbable EID Change";
                         //MessageBox.Show("Found Missing Term using SSN.\nProbable EID Change");
                     }
-                    if (counter < 10)
+
+                    if (counter < 10 && useOldRows == false) {
                         MessageBox.Show(tMsg);
-                    Console.WriteLine(tMsg);
-                    continue;
+                    }
+
+                    DialogResult diagRes = DialogResult.No;
+                    if(counter == 1) {
+                        diagRes = MessageBox.Show("Use Old File Records for Missing TERMS?", "USE OLD DATA", MessageBoxButtons.YesNo);
+                        useOldRows = (diagRes == DialogResult.Yes);
+                    }
+
+                    if (useOldRows) {
+                        tempRec = OldRecords.Where(x => x.EID == rec.EID && x.FirstName == rec.FirstName && 
+                                x.SSN == rec.SSN && x.LastName == rec.LastName && x.Relationship == rec.Relationship && 
+                                x.PlanType == rec.PlanType).FirstOrDefault();
+
+                        if(tempRec == null) {
+                            Console.WriteLine(tMsg);
+                            continue;
+                        } else {
+                            tempRec.Changes = "DROP-OLD_DATA";
+                            tempRec.ElectionStatus = "DROP";
+                            tempRec.CoverageDetails = "TERMINATED";
+                            tempRec.EffectiveDate = string.Empty;
+                            newDrops.Add(tempRec);
+                            MissingTerms.Add(tempRec);
+                            Console.WriteLine(tMsg + '\n' + "USED OLD DATA");
+                           
+                            continue;
+                        }
+                    } else {
+                        Console.WriteLine(tMsg);
+                        continue;
+                    }
                     //}
                 }
 
@@ -717,6 +740,13 @@ namespace EaseEnrollCompare {
 
             if (counter > 0) {
                 MessageBox.Show("missing terms = " + counter);
+                StreamWriter file = new StreamWriter(Path.GetDirectoryName(NEWINPUTFILE) + "\\MissingTerms.txt");
+
+                foreach (var missing in MissingTerms) {
+                        file.WriteLine(missing.ToString());
+                }
+                file.Flush();
+                file.Close();
             }
 
 

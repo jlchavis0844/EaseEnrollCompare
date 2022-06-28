@@ -196,7 +196,8 @@ public class CensusRow {
             }
 
             if (this.PlanDisplayName.Trim() != rhs.PlanDisplayName.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName|";
+                rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName (" + this.PlanDisplayName + " -> " + rhs.PlanDisplayName + ")|";
+                rhs.flagged = this.flagged = true;
             }
             if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
                 rhs.flagged = this.flagged = true;
