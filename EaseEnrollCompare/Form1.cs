@@ -712,7 +712,7 @@ namespace EaseEnrollCompare {
                         } else {
                             tempRec.Changes = "DROP-OLD_DATA";
                             tempRec.ElectionStatus = "DROP";
-                            tempRec.CoverageDetails = "TERMINATED";
+                            tempRec.CoverageDetails += " - TERMINATED";
                             tempRec.EffectiveDate = string.Empty;
                             newDrops.Add(tempRec);
                             MissingTerms.Add(tempRec);
