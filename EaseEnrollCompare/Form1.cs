@@ -406,6 +406,8 @@ namespace EaseEnrollCompare {
                 tempStr += carrier.Replace(" ", "") + "_";
             }
 
+            tempStr = (outputInitials + tempStr).Substring(0, 25);
+
             OutputFile = OutputFile + @"\Changes_" + outputInitials + tempStr +
                 DateTime.Now.ToString("MMddyyyy") + ".xlsx";
 
