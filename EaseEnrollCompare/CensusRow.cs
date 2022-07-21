@@ -47,6 +47,8 @@ public class CensusRow {
     public string SickHours { get; set; }
     public string PersonalHours { get; set; }
     public string W2Wages { get; set; }
+    public string Compensation { get; set; }
+    public string CompensationType { get; set; }
     public string PayCycle { get; set; }
     public string PayPeriods { get; set; }
     public string PayrollId { get; set; }
@@ -77,6 +79,7 @@ public class CensusRow {
     public string ActivityDate { get; set; }
     public string BenefitCompensationAmount { get; set; }
     public string BenefitCompensationType { get; set; }
+    public string CoverageTier { get; set; }
     public string CoverageDetails { get; set; }
     public string ElectionStatus { get; set; }
     public string ProcessedDate { get; set; }
@@ -101,9 +104,18 @@ public class CensusRow {
     public string LastModifiedDate { get; set; }
     public string LastModifiedBy { get; set; }
     public string ESignDate { get; set; }
-    public string VSPCode { get; set; }
+    public string BenefitAllowanceAvailable { get; set; }
+    public string BenefitAllowanceUsed { get; set; }
+    public string BenefitAllowanceRemaining { get; set; }
+    public string BenefitAllowanceCashBack { get; set; }
+    public string QualifyingEvent { get; set; }
+    public string QualifyingEventDate { get; set; }
+    public string QualifyingEventDetails { get; set; }
+    public string CalPERSID { get; set; }
     public string EnrolledBy { get; set; }
-    public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
+    public string NewBusiness { get; set; }
+
+public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
 
     //public string HSAYTDasof4/ 30 { get; set; }
     public bool Compare(CensusRow rhs, bool basic) {
@@ -306,9 +318,9 @@ public class CensusRow {
         if (String.IsNullOrEmpty(this.Changes))
             this.Changes = String.Empty;
 
-        string waVSPcode = string.Empty;
-        if (!string.IsNullOrWhiteSpace(this.VSPCode))
-            waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
+        //string waVSPcode = string.Empty;
+        //if (!string.IsNullOrWhiteSpace(this.VSPCode))
+        //    waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
 
         if (string.IsNullOrWhiteSpace(this.EnrolledBy))
             this.EnrolledBy = string.Empty;
@@ -339,7 +351,7 @@ public class CensusRow {
         retStr += this.EmployeeCostPerDeductionPeriod.Trim() + " | " + EmployerContribution.Trim() + " | " + EmployerCostPerDeductionPeriod.Trim() + "|";
         retStr += this.PlanDeductionCycle.Trim() + " | " + this.LastModifiedDate.Trim();
         retStr += this.LastModifiedBy.Trim() + " | " + this.ESignDate.Trim() + " | " + this.EnrolledBy.Trim();// + " | " + this.NewBusiness.Trim();
-        retStr += waVSPcode.Trim();
+        //retStr += waVSPcode.Trim();
 
         return retStr.Replace("  ", " ").Trim();
     }
@@ -390,6 +402,8 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.SickHours).Name("Sick Hours").ToString().Trim();
         this.Map(m => m.PersonalHours).Name("Personal Hours").ToString().Trim();
         this.Map(m => m.W2Wages).Name("W2 Wages").ToString().Trim();
+        this.Map(m => m.Compensation).Name("Compensation").ToString().Trim();
+        this.Map(m => m.CompensationType).Name("Compensation Type").ToString().Trim();
         this.Map(m => m.PayCycle).Name("Pay Cycle").ToString().Trim();
         this.Map(m => m.PayPeriods).Name("Pay Periods").ToString().Trim();
         this.Map(m => m.PayrollId).Name("Payroll Id").ToString().Trim();
@@ -420,6 +434,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.ActivityDate).Name("Activity Date").ToString().Trim();
         this.Map(m => m.BenefitCompensationAmount).Name("Benefit Compensation Amount").ToString().Trim();
         this.Map(m => m.BenefitCompensationType).Name("Benefit Compensation Type").ToString().Trim();
+        this.Map(m => m.CoverageTier).Name("Coverage Tier").ToString().Trim();
         this.Map(m => m.CoverageDetails).Name("Coverage Details").ToString().Trim();
         this.Map(m => m.ElectionStatus).Name("Election Status").ToString().Trim();
         this.Map(m => m.ProcessedDate).Name("Processed Date").ToString().Trim();
@@ -444,16 +459,21 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.LastModifiedDate).Name("Last Modified Date").ToString().Trim();
         this.Map(m => m.LastModifiedBy).Name("Last Modified By").ToString().Trim();
         this.Map(m => m.ESignDate).Name("E-Sign Date").ToString().Trim();
-        //this.Map(m => m.HSAYTDasof4 / 30).Name("HSA YTD as of 4/30").ToString().Trim();
+        this.Map(m => m.BenefitAllowanceAvailable).Name("Benefit Allowance - Available").ToString().Trim();
+        this.Map(m => m.BenefitAllowanceUsed).Name("Benefit Allowance - Used").ToString().Trim();
+        this.Map(m => m.BenefitAllowanceRemaining).Name("Benefit Allowance - Remaining").ToString().Trim();
+        this.Map(m => m.BenefitAllowanceCashBack).Name("Benefit Allowance - Cash Back").ToString().Trim();
+        this.Map(m => m.QualifyingEvent).Name("Qualifying Event").ToString().Trim();
+        this.Map(m => m.QualifyingEventDate).Name("Qualifying Event Date").ToString().Trim();
+        this.Map(m => m.QualifyingEventDetails).Name("Qualifying Event Details").ToString().Trim();
+        //this.Map(m => m.CalPERSID).Name("CalPERS ID").ToString().Trim();
+        //this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
+        //this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();
 
-        this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
-        this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
-
-        // Map(m => m.EnrolledBy).Name("Enrolled By");
-        // Map(m => m.NewBusiness).Name("New Business");
     }
 
     public static void WriteHeader(ExcelWorksheet worksheet) {
+
         if (worksheet.Cells[1, 1].Value != null)
             worksheet.Cells[1, 1].Value = "Company Name";
 
@@ -515,222 +535,274 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
             worksheet.Cells[1, 20].Value = "Country";
 
         if (worksheet.Cells[1, 21].Value != null)
-            worksheet.Cells[1, 21].Value = "Personal Phone";
+            worksheet.Cells[1, 21].Value = "Mailing Address";
 
         if (worksheet.Cells[1, 22].Value != null)
-            worksheet.Cells[1, 22].Value = "Work Phone";
+            worksheet.Cells[1, 22].Value = "Personal Phone";
 
         if (worksheet.Cells[1, 23].Value != null)
-            worksheet.Cells[1, 23].Value = "Mobile Phone";
+            worksheet.Cells[1, 23].Value = "Work Phone";
 
         if (worksheet.Cells[1, 24].Value != null)
-            worksheet.Cells[1, 24].Value = "Email";
+            worksheet.Cells[1, 24].Value = "Mobile Phone";
 
         if (worksheet.Cells[1, 25].Value != null)
-            worksheet.Cells[1, 25].Value = "Personal Email";
+            worksheet.Cells[1, 25].Value = "Email";
 
         if (worksheet.Cells[1, 26].Value != null)
-            worksheet.Cells[1, 26].Value = "Employee Type";
+            worksheet.Cells[1, 26].Value = "Personal Email";
 
         if (worksheet.Cells[1, 27].Value != null)
-            worksheet.Cells[1, 27].Value = "Employee Status";
+            worksheet.Cells[1, 27].Value = "Employee Type";
 
         if (worksheet.Cells[1, 28].Value != null)
-            worksheet.Cells[1, 28].Value = "Hire Date";
+            worksheet.Cells[1, 28].Value = "Employee Status";
 
         if (worksheet.Cells[1, 29].Value != null)
-            worksheet.Cells[1, 29].Value = "Termination Date";
+            worksheet.Cells[1, 29].Value = "Hire Date";
 
         if (worksheet.Cells[1, 30].Value != null)
-            worksheet.Cells[1, 30].Value = "Department";
+            worksheet.Cells[1, 30].Value = "Termination Date";
 
         if (worksheet.Cells[1, 31].Value != null)
-            worksheet.Cells[1, 31].Value = "Division";
+            worksheet.Cells[1, 31].Value = "Termination Type";
 
         if (worksheet.Cells[1, 32].Value != null)
-            worksheet.Cells[1, 32].Value = "Job Class";
+            worksheet.Cells[1, 32].Value = "Department";
 
         if (worksheet.Cells[1, 33].Value != null)
-            worksheet.Cells[1, 33].Value = "Job Title";
+            worksheet.Cells[1, 33].Value = "Division";
 
         if (worksheet.Cells[1, 34].Value != null)
-            worksheet.Cells[1, 34].Value = "Marital Status";
+            worksheet.Cells[1, 34].Value = "Job Class";
 
         if (worksheet.Cells[1, 35].Value != null)
-            worksheet.Cells[1, 35].Value = "Marital Date";
+            worksheet.Cells[1, 35].Value = "Job Title";
 
         if (worksheet.Cells[1, 36].Value != null)
-            worksheet.Cells[1, 36].Value = "Marital Location";
+            worksheet.Cells[1, 36].Value = "Marital Status";
 
         if (worksheet.Cells[1, 37].Value != null)
-            worksheet.Cells[1, 37].Value = "Student Status";
+            worksheet.Cells[1, 37].Value = "Marital Date";
 
         if (worksheet.Cells[1, 38].Value != null)
-            worksheet.Cells[1, 38].Value = "Scheduled Hours";
+            worksheet.Cells[1, 38].Value = "Marital Location";
 
         if (worksheet.Cells[1, 39].Value != null)
-            worksheet.Cells[1, 39].Value = "Sick Hours";
+            worksheet.Cells[1, 39].Value = "Student Status";
 
         if (worksheet.Cells[1, 40].Value != null)
-            worksheet.Cells[1, 40].Value = "Personal Hours";
+            worksheet.Cells[1, 40].Value = "Scheduled Hours";
 
         if (worksheet.Cells[1, 41].Value != null)
-            worksheet.Cells[1, 41].Value = "W2 Wages";
+            worksheet.Cells[1, 41].Value = "Sick Hours";
 
         if (worksheet.Cells[1, 42].Value != null)
-            worksheet.Cells[1, 42].Value = "Pay Cycle";
+            worksheet.Cells[1, 42].Value = "Personal Hours";
 
         if (worksheet.Cells[1, 43].Value != null)
-            worksheet.Cells[1, 43].Value = "Pay Periods";
+            worksheet.Cells[1, 43].Value = "W2 Wages";
 
         if (worksheet.Cells[1, 44].Value != null)
-            worksheet.Cells[1, 44].Value = "Cost Factor";
+            worksheet.Cells[1, 44].Value = "Compensation";
 
         if (worksheet.Cells[1, 45].Value != null)
-            worksheet.Cells[1, 45].Value = "Tobacco User";
+            worksheet.Cells[1, 45].Value = "Compensation Type";
 
         if (worksheet.Cells[1, 46].Value != null)
-            worksheet.Cells[1, 46].Value = "Disabled";
+            worksheet.Cells[1, 46].Value = "Pay Cycle";
 
         if (worksheet.Cells[1, 47].Value != null)
-            worksheet.Cells[1, 47].Value = "Medicare A Date";
+            worksheet.Cells[1, 47].Value = "Pay Periods";
 
         if (worksheet.Cells[1, 48].Value != null)
-            worksheet.Cells[1, 48].Value = "Medicare B Date";
+            worksheet.Cells[1, 48].Value = "Payroll Id";
 
         if (worksheet.Cells[1, 49].Value != null)
-            worksheet.Cells[1, 49].Value = "Medicare C Date";
+            worksheet.Cells[1, 49].Value = "Cost Factor";
 
         if (worksheet.Cells[1, 50].Value != null)
-            worksheet.Cells[1, 50].Value = "Medicare D Date";
+            worksheet.Cells[1, 50].Value = "Tobacco User";
 
         if (worksheet.Cells[1, 51].Value != null)
-            worksheet.Cells[1, 51].Value = "Medical PCP Name";
+            worksheet.Cells[1, 51].Value = "Disabled";
 
         if (worksheet.Cells[1, 52].Value != null)
-            worksheet.Cells[1, 52].Value = "Medical PCP ID";
+            worksheet.Cells[1, 52].Value = "Medicare A Date";
 
         if (worksheet.Cells[1, 53].Value != null)
-            worksheet.Cells[1, 53].Value = "Dental PCP Name";
+            worksheet.Cells[1, 53].Value = "Medicare B Date";
 
         if (worksheet.Cells[1, 54].Value != null)
-            worksheet.Cells[1, 54].Value = "Dental PCP ID";
+            worksheet.Cells[1, 54].Value = "Medicare C Date";
 
         if (worksheet.Cells[1, 55].Value != null)
-            worksheet.Cells[1, 55].Value = "IPA Number";
+            worksheet.Cells[1, 55].Value = "Medicare D Date";
 
         if (worksheet.Cells[1, 56].Value != null)
-            worksheet.Cells[1, 56].Value = "OBGYN";
+            worksheet.Cells[1, 56].Value = "Medical PCP Name";
 
         if (worksheet.Cells[1, 57].Value != null)
-            worksheet.Cells[1, 57].Value = "Benefit Eligible Date";
+            worksheet.Cells[1, 57].Value = "Medical PCP ID";
 
         if (worksheet.Cells[1, 58].Value != null)
-            worksheet.Cells[1, 58].Value = "Unlock Enrollment Date";
+            worksheet.Cells[1, 58].Value = "Dental PCP Name";
 
         if (worksheet.Cells[1, 59].Value != null)
-            worksheet.Cells[1, 59].Value = "Original Effective Date Info";
+            worksheet.Cells[1, 59].Value = "Dental PCP ID";
 
         if (worksheet.Cells[1, 60].Value != null)
-            worksheet.Cells[1, 60].Value = "Subscriber Key";
+            worksheet.Cells[1, 60].Value = "IPA Number";
 
         if (worksheet.Cells[1, 61].Value != null)
-            worksheet.Cells[1, 61].Value = "Plan Type";
+            worksheet.Cells[1, 61].Value = "OBGYN";
 
         if (worksheet.Cells[1, 62].Value != null)
-            worksheet.Cells[1, 62].Value = "Plan Effective Start Date";
+            worksheet.Cells[1, 62].Value = "Benefit Eligible Date";
 
         if (worksheet.Cells[1, 63].Value != null)
-            worksheet.Cells[1, 63].Value = "Plan Effective End Date";
+            worksheet.Cells[1, 63].Value = "Unlock Enrollment Date";
 
         if (worksheet.Cells[1, 64].Value != null)
-            worksheet.Cells[1, 64].Value = "Plan Admin Name";
+            worksheet.Cells[1, 64].Value = "Original Effective Date Info";
 
         if (worksheet.Cells[1, 65].Value != null)
-            worksheet.Cells[1, 65].Value = "Plan Display Name";
+            worksheet.Cells[1, 65].Value = "Subscriber Key";
 
         if (worksheet.Cells[1, 66].Value != null)
-            worksheet.Cells[1, 66].Value = "Plan Import ID";
+            worksheet.Cells[1, 66].Value = "Plan Type";
 
         if (worksheet.Cells[1, 67].Value != null)
-            worksheet.Cells[1, 67].Value = "Effective Date";
+            worksheet.Cells[1, 67].Value = "Plan Effective Start Date";
 
         if (worksheet.Cells[1, 68].Value != null)
-            worksheet.Cells[1, 68].Value = "Activity Date";
+            worksheet.Cells[1, 68].Value = "Plan Effective End Date";
 
         if (worksheet.Cells[1, 69].Value != null)
-            worksheet.Cells[1, 69].Value = "Benefit Compensation Amount";
+            worksheet.Cells[1, 69].Value = "Plan Admin Name";
 
         if (worksheet.Cells[1, 70].Value != null)
-            worksheet.Cells[1, 70].Value = "Benefit Compensation Type";
+            worksheet.Cells[1, 70].Value = "Plan Display Name";
 
         if (worksheet.Cells[1, 71].Value != null)
-            worksheet.Cells[1, 71].Value = "Coverage Details";
+            worksheet.Cells[1, 71].Value = "Plan Import ID";
 
         if (worksheet.Cells[1, 72].Value != null)
-            worksheet.Cells[1, 72].Value = "Election Status";
+            worksheet.Cells[1, 72].Value = "Effective Date";
 
         if (worksheet.Cells[1, 73].Value != null)
-            worksheet.Cells[1, 73].Value = "Processed Date";
+            worksheet.Cells[1, 73].Value = "Activity Date";
 
         if (worksheet.Cells[1, 74].Value != null)
-            worksheet.Cells[1, 74].Value = "Rider Codes";
+            worksheet.Cells[1, 74].Value = "Benefit Compensation Amount";
 
         if (worksheet.Cells[1, 75].Value != null)
-            worksheet.Cells[1, 75].Value = "Action";
+            worksheet.Cells[1, 75].Value = "Benefit Compensation Type";
 
         if (worksheet.Cells[1, 76].Value != null)
-            worksheet.Cells[1, 76].Value = "Waive Reason";
+            worksheet.Cells[1, 76].Value = "Coverage Tier";
 
         if (worksheet.Cells[1, 77].Value != null)
-            worksheet.Cells[1, 77].Value = "Policy Number";
+            worksheet.Cells[1, 77].Value = "Coverage Details";
 
         if (worksheet.Cells[1, 78].Value != null)
-            worksheet.Cells[1, 78].Value = "Subgroup Number";
+            worksheet.Cells[1, 78].Value = "Election Status";
 
         if (worksheet.Cells[1, 79].Value != null)
-            worksheet.Cells[1, 79].Value = "Age Determination";
+            worksheet.Cells[1, 79].Value = "Processed Date";
 
         if (worksheet.Cells[1, 80].Value != null)
-            worksheet.Cells[1, 80].Value = "Carrier";
+            worksheet.Cells[1, 80].Value = "Rider Codes";
 
         if (worksheet.Cells[1, 81].Value != null)
-            worksheet.Cells[1, 81].Value = "Total Rate";
+            worksheet.Cells[1, 81].Value = "Action";
 
         if (worksheet.Cells[1, 82].Value != null)
-            worksheet.Cells[1, 82].Value = "Employee Rate";
+            worksheet.Cells[1, 82].Value = "Waive Reason";
 
         if (worksheet.Cells[1, 83].Value != null)
-            worksheet.Cells[1, 83].Value = "Spouse Rate";
+            worksheet.Cells[1, 83].Value = "Policy Number";
 
         if (worksheet.Cells[1, 84].Value != null)
-            worksheet.Cells[1, 84].Value = "Children Rate";
+            worksheet.Cells[1, 84].Value = "Subgroup Number";
 
         if (worksheet.Cells[1, 85].Value != null)
-            worksheet.Cells[1, 85].Value = "Employee Contribution";
+            worksheet.Cells[1, 85].Value = "Age Determination";
 
         if (worksheet.Cells[1, 86].Value != null)
-            worksheet.Cells[1, 86].Value = "Employee Pre-Tax Cost";
+            worksheet.Cells[1, 86].Value = "Carrier";
 
         if (worksheet.Cells[1, 87].Value != null)
-            worksheet.Cells[1, 87].Value = "Employee Post-Tax Cost";
+            worksheet.Cells[1, 87].Value = "Total Rate";
 
         if (worksheet.Cells[1, 88].Value != null)
-            worksheet.Cells[1, 88].Value = "Employee Cost Per Deduction Period";
+            worksheet.Cells[1, 88].Value = "Employee Rate";
 
         if (worksheet.Cells[1, 89].Value != null)
-            worksheet.Cells[1, 89].Value = "Plan Deduction Cycle";
+            worksheet.Cells[1, 89].Value = "Spouse Rate";
 
         if (worksheet.Cells[1, 90].Value != null)
-            worksheet.Cells[1, 90].Value = "Last Modified Date";
+            worksheet.Cells[1, 90].Value = "Children Rate";
 
         if (worksheet.Cells[1, 91].Value != null)
-            worksheet.Cells[1, 91].Value = "Last Modified By";
+            worksheet.Cells[1, 91].Value = "Employee Contribution";
 
         if (worksheet.Cells[1, 92].Value != null)
-            worksheet.Cells[1, 92].Value = "E-Sign Date";
+            worksheet.Cells[1, 92].Value = "Employee Pre-Tax Cost";
 
         if (worksheet.Cells[1, 93].Value != null)
-            worksheet.Cells[1, 93].Value = "Enrolled By";
+            worksheet.Cells[1, 93].Value = "Employee Post-Tax Cost";
+
+        if (worksheet.Cells[1, 94].Value != null)
+            worksheet.Cells[1, 94].Value = "Employee Cost Per Deduction Period";
+
+        if (worksheet.Cells[1, 95].Value != null)
+            worksheet.Cells[1, 95].Value = "Employer Contribution";
+
+        if (worksheet.Cells[1, 96].Value != null)
+            worksheet.Cells[1, 96].Value = "Employer Cost Per Deduction Period";
+
+        if (worksheet.Cells[1, 97].Value != null)
+            worksheet.Cells[1, 97].Value = "Plan Deduction Cycle";
+
+        if (worksheet.Cells[1, 98].Value != null)
+            worksheet.Cells[1, 98].Value = "Last Modified Date";
+
+        if (worksheet.Cells[1, 99].Value != null)
+            worksheet.Cells[1, 99].Value = "Last Modified By";
+
+        if (worksheet.Cells[1, 100].Value != null)
+            worksheet.Cells[1, 100].Value = "E-Sign Date";
+
+        if (worksheet.Cells[1, 101].Value != null)
+            worksheet.Cells[1, 101].Value = "Benefit Allowance - Available";
+
+        if (worksheet.Cells[1, 102].Value != null)
+            worksheet.Cells[1, 102].Value = "Benefit Allowance - Used";
+
+        if (worksheet.Cells[1, 103].Value != null)
+            worksheet.Cells[1, 103].Value = "Benefit Allowance - Remaining";
+
+        if (worksheet.Cells[1, 104].Value != null)
+            worksheet.Cells[1, 104].Value = "Benefit Allowance - Cash Back";
+
+        if (worksheet.Cells[1, 105].Value != null)
+            worksheet.Cells[1, 105].Value = "Qualifying Event";
+
+        if (worksheet.Cells[1, 106].Value != null)
+            worksheet.Cells[1, 106].Value = "Qualifying Event Date";
+
+        if (worksheet.Cells[1, 107].Value != null)
+            worksheet.Cells[1, 107].Value = "Qualifying Event Details";
+
+        if (worksheet.Cells[1, 108].Value != null)
+            worksheet.Cells[1, 108].Value = "CalPERS ID";
+
+        if (worksheet.Cells[1, 109].Value != null)
+            worksheet.Cells[1, 109].Value = "Enrolled By";
+
+        if (worksheet.Cells[1, 110].Value != null)
+            worksheet.Cells[1, 110].Value = "New Business";
+
     }
 }
