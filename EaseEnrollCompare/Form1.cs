@@ -25,7 +25,7 @@ namespace EaseEnrollCompare {
         public static List<CensusRow> Changes = new List<CensusRow>();
         public static List<CensusRow> output = new List<CensusRow>();
         public static List<string> MissingTermEIDs = new List<string>();
-
+        public static List<string> sec125Plans = new string[] { "FSA Health Care", "Health Savings Account", "FSA Dependent Care" }.ToList();
         public Form1() {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             InitializeComponent();
@@ -37,17 +37,6 @@ namespace EaseEnrollCompare {
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             // Log the exception, display it, etc
             MessageBox.Show((e.ExceptionObject as Exception).Message, "UNHANDLED EXCEPTION", MessageBoxButtons.OK);
-        }
-        static bool Junk(int myint) {
-            bool answer = myint % 2 == 0;
-            switch (answer) {
-                case true:
-                    return true;
-                case false:
-                    return false;
-                default:
-                    return Junk((int)Math.IEEERemainder(myint, 2));
-            }
         }
 
         private void btnLoadOld_Click(object sender, EventArgs e) {
@@ -322,6 +311,13 @@ namespace EaseEnrollCompare {
                 var newRec = OriginalNewRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList();
 
                 tempDrop.PlanEffectiveStartDate = OriginalOldRecords.Where(d => d.EID == drop.EID && d.SSN == drop.SSN && d.PlanType == tempDrop.PlanType).ToList().First().EffectiveDate;
+                
+                //check for voids (drop effective date  = original effective start date)
+                if(tempDrop.PlanEffectiveStartDate == tempDrop.EffectiveDate && sec125Plans.Contains(tempDrop.PlanType)){
+                    tempDrop.Changes = "VOID";
+                    MessageBox.Show("VOID Record found for\n" + tempDrop.ToString());
+                }
+
 
                 if(!tempDrop.CoverageDetails.Contains("TERMINATED"))
                     tempDrop.CoverageDetails = (drop.CoverageDetails + " - TERMINATED " + dropDate).Trim();
