@@ -26,6 +26,8 @@ namespace EaseEnrollCompare {
         public static List<CensusRow> output = new List<CensusRow>();
         public static List<string> MissingTermEIDs = new List<string>();
         public static List<string> sec125Plans = new string[] { "FSA Health Care", "Health Savings Account", "FSA Dependent Care" }.ToList();
+        private bool FoundVoid = false;
+
         public Form1() {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
             InitializeComponent();
@@ -315,7 +317,10 @@ namespace EaseEnrollCompare {
                 //check for voids (drop effective date  = original effective start date)
                 if(tempDrop.PlanEffectiveStartDate == tempDrop.EffectiveDate && sec125Plans.Contains(tempDrop.PlanType)){
                     tempDrop.Changes = "VOID";
-                    MessageBox.Show("VOID Record found for\n" + tempDrop.ToString());
+                    if(FoundVoid == false)
+                        MessageBox.Show("VOID Record found for\n" + tempDrop.ToString() + "\n\n\nNo more warnings will be shown!\n" + 
+                            "*************************************************************");
+                    FoundVoid = true;
                 }
 
 
@@ -926,6 +931,7 @@ namespace EaseEnrollCompare {
             dt.Columns[105].ColumnName = "Qualifying Event";
             dt.Columns[106].ColumnName = "Qualifying Event Date";
             dt.Columns[107].ColumnName = "Qualifying Event Details";
+            dt.Columns[111].ColumnName = "VSP Code";
             //dt.Columns[108].ColumnName = "CalPERS ID";
             //dt.Columns[109].ColumnName = "Enrolled By";
             //dt.Columns[110].ColumnName = "New Business";
@@ -951,6 +957,12 @@ namespace EaseEnrollCompare {
             Properties.Settings.Default.OpenDataOut = cbOpenEDIData.Checked;
             Properties.Settings.Default.Save();
             Console.WriteLine("Changed cbOpenEDIData to " + Properties.Settings.Default.OpenChangesFile);
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e) {
+            this.dgvOutPut.SelectAll();
+            DataObject dataObj = this.dgvOutPut.GetClipboardContent();
+            Clipboard.SetDataObject(dataObj, true);
         }
     }
 }

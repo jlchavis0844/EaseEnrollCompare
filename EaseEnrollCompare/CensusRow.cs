@@ -114,8 +114,9 @@ public class CensusRow {
     public string CalPERSID { get; set; }
     public string EnrolledBy { get; set; }
     public string NewBusiness { get; set; }
+    public string VSPCode { get; set; }
 
-public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
+    public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
 
     //public string HSAYTDasof4/ 30 { get; set; }
     public bool Compare(CensusRow rhs, bool basic) {
@@ -259,6 +260,21 @@ public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
             }
 
 
+            if (this.MedicalPCPName.Trim() != rhs.MedicalPCPName.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|MedicalPCPName|";
+            }
+            if (this.MedicalPCPID.Trim() != rhs.MedicalPCPID.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|MedicalPCPID|";
+            }
+            if (this.DentalPCPName.Trim() != rhs.DentalPCPName.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|DentalPCPName|";
+            }
+            if (this.DentalPCPID.Trim() != rhs.DentalPCPID.Trim()) {
+                rhs.Changes = this.Changes = this.Changes + "|DentalPCPID|";
+            }
+
+
+
             rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
             if (rhs.Changes.StartsWith("|")) {
                 rhs.Changes = rhs.Changes.Substring(1);
@@ -318,9 +334,9 @@ public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
         if (String.IsNullOrEmpty(this.Changes))
             this.Changes = String.Empty;
 
-        //string waVSPcode = string.Empty;
-        //if (!string.IsNullOrWhiteSpace(this.VSPCode))
-        //    waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
+        string waVSPcode = string.Empty;
+        if (!string.IsNullOrWhiteSpace(this.VSPCode))
+            waVSPcode = this.VSPCode.StartsWith("00") ? this.VSPCode.Substring(2, this.VSPCode.Length - 2) : this.VSPCode;
 
         if (string.IsNullOrWhiteSpace(this.EnrolledBy))
             this.EnrolledBy = string.Empty;
@@ -466,6 +482,7 @@ public class CensusRowClassMap : ClassMap<CensusRow> {
         this.Map(m => m.QualifyingEvent).Name("Qualifying Event").ToString().Trim();
         this.Map(m => m.QualifyingEventDate).Name("Qualifying Event Date").ToString().Trim();
         this.Map(m => m.QualifyingEventDetails).Name("Qualifying Event Details").ToString().Trim();
+        this.Map(m => m.VSPCode).Name("VSP Code").ToString().Trim();
         //this.Map(m => m.CalPERSID).Name("CalPERS ID").ToString().Trim();
         //this.Map(m => m.EnrolledBy).Name("Enrolled By").ToString().Trim();
         //this.Map(m => m.NewBusiness).Name("New Business").ToString().Trim();

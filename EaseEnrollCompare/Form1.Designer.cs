@@ -49,6 +49,7 @@
             this.cbAutoChanges = new System.Windows.Forms.CheckBox();
             this.cbOpenEDIData = new System.Windows.Forms.CheckBox();
             this.cbEmpOnly = new System.Windows.Forms.CheckBox();
+            this.btnCopy = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOutPut)).BeginInit();
             this.SuspendLayout();
             // 
@@ -118,10 +119,12 @@
             this.dgvOutPut.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvOutPut.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             this.dgvOutPut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvOutPut.Location = new System.Drawing.Point(13, 243);
             this.dgvOutPut.Name = "dgvOutPut";
             this.dgvOutPut.ReadOnly = true;
+            this.dgvOutPut.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvOutPut.Size = new System.Drawing.Size(1397, 798);
             this.dgvOutPut.TabIndex = 6;
             // 
@@ -337,11 +340,22 @@
             this.cbEmpOnly.Text = "Employee Only";
             this.cbEmpOnly.UseVisualStyleBackColor = true;
             // 
+            // btnCopy
+            // 
+            this.btnCopy.Location = new System.Drawing.Point(1334, 214);
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(75, 23);
+            this.btnCopy.TabIndex = 26;
+            this.btnCopy.Text = "Copy Data";
+            this.btnCopy.UseVisualStyleBackColor = true;
+            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1422, 1053);
+            this.Controls.Add(this.btnCopy);
             this.Controls.Add(this.cbEmpOnly);
             this.Controls.Add(this.cbOpenEDIData);
             this.Controls.Add(this.cbAutoChanges);
@@ -404,6 +418,7 @@
         private System.Windows.Forms.CheckBox cbAutoChanges;
         private System.Windows.Forms.CheckBox cbOpenEDIData;
         private System.Windows.Forms.CheckBox cbEmpOnly;
+        private System.Windows.Forms.Button btnCopy;
     }
 }
 
