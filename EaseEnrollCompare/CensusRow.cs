@@ -1,6 +1,7 @@
 ﻿using CsvHelper.Configuration;
 using OfficeOpenXml;
 using System;
+using System.Reflection;
 
 public class CensusRow {
     public string Changes { get; set; }
@@ -118,8 +119,83 @@ public class CensusRow {
 
     public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
 
+    public bool CompareNew(CensusRow rhs) {
+        Type type = rhs.GetType();
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        int cnt = properties.Length;
+
+        if (this.Changes == null) {
+            this.Changes = string.Empty;
+        } //else if (this.Changes.Length > 0) {
+        //    Console.WriteLine(this.Changes);
+        //}
+
+        if (rhs.Changes == null) {
+            rhs.Changes = string.Empty;
+        } /*else if (rhs.Changes.Length > 0) {
+            Console.WriteLine(rhs.Changes);
+        }*/
+
+        foreach (PropertyInfo property in properties) {
+            if (property.Name == "Changes")
+                continue;//skip first prop (changes)
+
+            Console.WriteLine("Checking " + property.Name);
+            var val1 = property.GetValue(this);
+            var val2 = property.GetValue(rhs);
+            if (!String.Equals(val1, val2)) {
+                Console.WriteLine(val1 + " doesn't match " + val2 + " for " + property.Name);
+                this.Changes = (rhs.Changes += property.Name + "|");
+            }
+            cnt--;
+        }
+
+        if (this.Changes.Trim().Length == 0) {
+            if (this.ToString() == rhs.ToString())
+                return true;
+
+            int stopNum = 0;
+            string message = string.Empty;
+            var leftStr = this.ToString().ToCharArray();
+            var rightStr = rhs.ToString().ToCharArray();
+
+            if (leftStr.Length >= rightStr.Length) {
+                for (int i = 0; i < rightStr.Length; i++) {
+                    if (leftStr[i] != rightStr[i]) {
+                        stopNum = i;
+                        break;
+                    }
+                }
+
+                message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+                message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n";
+            } else {
+                for (int i = 0; i < leftStr.Length; i++) {
+                    if (rightStr[i] != leftStr[i]) {
+                        stopNum = i;
+                        break;
+                    }
+                }
+
+                message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n\n";
+                message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+            }
+            this.Changes = message;
+            Console.WriteLine(message);
+            //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
+        } else {
+            this.Changes = rhs.Changes = rhs.Changes.Trim().Remove(rhs.Changes.Length - 1);
+        }
+
+
+        if (cnt != 0)
+            Console.WriteLine("missing props: " + cnt);
+        return false;
+    }
+
     //public string HSAYTDasof4/ 30 { get; set; }
     public bool Compare(CensusRow rhs, bool basic) {
+        //CompareNew(rhs);
         this.flagged = false;
         bool matched = true;
 
@@ -131,196 +207,194 @@ public class CensusRow {
             } else return matched;
         }
 
+        return CompareNew(rhs);
 
-        if (this.Changes == null)
-            this.Changes = string.Empty;
+        //if (this.Changes == null)
+        //    this.Changes = string.Empty;
 
-        if (rhs.Changes == null)
-            rhs.Changes = string.Empty;
+        //if (rhs.Changes == null)
+        //    rhs.Changes = string.Empty;
 
-        if (this.ToString() != rhs.ToString()) {
-            matched = false;
+        //if (this.ToString() != rhs.ToString()) {
+        //    matched = false;
 
-            if (!this.LastName.Trim().Equals(rhs.LastName.Trim())) {
-                rhs.Changes = this.Changes = this.Changes + "Last Name (" + this.LastName + " -> " + rhs.LastName + ")|";
-            }
-            if (this.Location.Trim() != rhs.Location.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|Location|";
-            }
-            if (this.SSN.Trim() != rhs.SSN.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|SSN|";
-            }
-            if (this.BirthDate.Trim() != rhs.BirthDate.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|BirthDate|";
-            }
-            if (this.Address1.Trim() != rhs.Address1.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|Address1|";
-            }
-            if (this.Address2.Trim() != rhs.Address2.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|Address2|";
-            }
-            if (this.City.Trim() != rhs.City.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|City|";
-            }
-            if (this.State.Trim() != rhs.State.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|State|";
-            }
-            if (this.Zip.Trim() != rhs.Zip.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|Zip|";
-            }
-            if (this.PersonalPhone.Trim() != rhs.PersonalPhone.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|PersonalPhone|";
-            }
-            if (this.WorkPhone.Trim() != rhs.WorkPhone.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|WorkPhone|";
-            }
-            if (this.MobilePhone.Trim() != rhs.MobilePhone.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|MobilePhone|";
-            }
-            if (this.EmployeeStatus.Trim() != rhs.EmployeeStatus.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|EmployeeStatus|";
-            }
-            if (this.HireDate.Trim() != rhs.HireDate.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|HireDate|";
-            }
-            if (this.TerminationDate.Trim() != rhs.TerminationDate.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|TerminationDate|";
-            }
-            if (this.JobClass.Trim() != rhs.JobClass.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|JobClass|";
-            }
-            if (this.JobTitle.Trim() != rhs.JobTitle.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|JobTitle|";
-            }
-            if (this.Division.Trim() != rhs.Division.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|Division|";
-            }
-            if (this.MaritalStatus.Trim() != rhs.MaritalStatus.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|MaritalStatus|";
-            }
-            if (this.ScheduledHours.Trim() != rhs.ScheduledHours.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|ScheduledHours|";
-            }
-            if (this.PayCycle.Trim() != rhs.PayCycle.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
-            }
-            if (this.CostFactor.Trim() != rhs.CostFactor.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|CostFactor|";
-            }
+        //    if (!this.LastName.Trim().Equals(rhs.LastName.Trim())) {
+        //        rhs.Changes = this.Changes = this.Changes + "Last Name (" + this.LastName + " -> " + rhs.LastName + ")|";
+        //    }
+        //    if (this.Location.Trim() != rhs.Location.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|Location|";
+        //    }
+        //    if (this.SSN.Trim() != rhs.SSN.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|SSN|";
+        //    }
+        //    if (this.BirthDate.Trim() != rhs.BirthDate.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|BirthDate|";
+        //    }
+        //    if (this.Address1.Trim() != rhs.Address1.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|Address1|";
+        //    }
+        //    if (this.Address2.Trim() != rhs.Address2.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|Address2|";
+        //    }
+        //    if (this.City.Trim() != rhs.City.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|City|";
+        //    }
+        //    if (this.State.Trim() != rhs.State.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|State|";
+        //    }
+        //    if (this.Zip.Trim() != rhs.Zip.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|Zip|";
+        //    }
+        //    if (this.PersonalPhone.Trim() != rhs.PersonalPhone.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|PersonalPhone|";
+        //    }
+        //    if (this.WorkPhone.Trim() != rhs.WorkPhone.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|WorkPhone|";
+        //    }
+        //    if (this.MobilePhone.Trim() != rhs.MobilePhone.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|MobilePhone|";
+        //    }
+        //    if (this.EmployeeStatus.Trim() != rhs.EmployeeStatus.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|EmployeeStatus|";
+        //    }
+        //    if (this.HireDate.Trim() != rhs.HireDate.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|HireDate|";
+        //    }
+        //    if (this.TerminationDate.Trim() != rhs.TerminationDate.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|TerminationDate|";
+        //    }
+        //    if (this.JobClass.Trim() != rhs.JobClass.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|JobClass|";
+        //    }
+        //    if (this.JobTitle.Trim() != rhs.JobTitle.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|JobTitle|";
+        //    }
+        //    if (this.Division.Trim() != rhs.Division.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|Division|";
+        //    }
+        //    if (this.MaritalStatus.Trim() != rhs.MaritalStatus.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|MaritalStatus|";
+        //    }
+        //    if (this.ScheduledHours.Trim() != rhs.ScheduledHours.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|ScheduledHours|";
+        //    }
+        //    if (this.PayCycle.Trim() != rhs.PayCycle.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|PayCycle|";
+        //    }
+        //    if (this.CostFactor.Trim() != rhs.CostFactor.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|CostFactor|";
+        //    }
 
-            if (this.PlanDisplayName.Trim() != rhs.PlanDisplayName.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName (" + this.PlanDisplayName + " -> " + rhs.PlanDisplayName + ")|";
-                rhs.flagged = this.flagged = true;
-            }
-            if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
-                rhs.flagged = this.flagged = true;
-                rhs.Changes = this.Changes = this.Changes + "|CoverageDetails (" + this.CoverageDetails + " -> " + rhs.CoverageDetails + ")|";
-            }
-            if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
-                rhs.flagged = this.flagged = true;
-                if (!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
-                    this.EffectiveDate = DateTime.Parse(this.EffectiveDate).ToString("MM/dd/yyyy");
-                    rhs.EffectiveDate = DateTime.Parse(rhs.EffectiveDate).ToString("MM/dd/yyyy");
-                }
+        //    if (this.PlanDisplayName.Trim() != rhs.PlanDisplayName.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|PlanDisplayName (" + this.PlanDisplayName + " -> " + rhs.PlanDisplayName + ")|";
+        //        rhs.flagged = this.flagged = true;
+        //    }
+        //    if (this.CoverageDetails.Trim() != rhs.CoverageDetails.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        rhs.Changes = this.Changes = this.Changes + "|CoverageDetails (" + this.CoverageDetails + " -> " + rhs.CoverageDetails + ")|";
+        //    }
+        //    if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        if (!string.IsNullOrWhiteSpace(this.EffectiveDate) && !string.IsNullOrWhiteSpace(rhs.EffectiveDate)) {
+        //            this.EffectiveDate = DateTime.Parse(this.EffectiveDate).ToString("MM/dd/yyyy");
+        //            rhs.EffectiveDate = DateTime.Parse(rhs.EffectiveDate).ToString("MM/dd/yyyy");
+        //        }
 
-                if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
-                    rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
-                }
-            }
-            if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
-                rhs.flagged = this.flagged = true;
-                rhs.Changes = this.Changes = this.Changes + "|ElectionStatus (" + this.ElectionStatus + " -> " + rhs.ElectionStatus + ")|"; ;
-            }
-            if (this.TotalRate.Trim() != rhs.TotalRate.Trim()) {
-                rhs.flagged = this.flagged = true;
-                rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
-            }
-            if (this.EmployeeCostPerDeductionPeriod.Trim() != rhs.EmployeeCostPerDeductionPeriod.Trim()) {
-                rhs.flagged = this.flagged = true;
-                rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
-            }
-            if (this.EmployerCostPerDeductionPeriod.Trim() != rhs.EmployerCostPerDeductionPeriod.Trim()) {
-                rhs.flagged = this.flagged = true;
-                rhs.Changes = this.Changes = this.Changes + "|EmployerCostPerDeductionPeriod|";
-            }
-            if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
-                if (!string.IsNullOrWhiteSpace(this.ESignDate) && !string.IsNullOrWhiteSpace(rhs.ESignDate)) {
-                    this.ESignDate = DateTime.Parse(this.ESignDate).ToString("MM/dd/yyyy");
-                    rhs.ESignDate = DateTime.Parse(rhs.ESignDate).ToString("MM/dd/yyyy");
-                }
-                if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
-                    rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
-                }
-            }
-            if (this.BenefitCompensationAmount.Trim() != rhs.BenefitCompensationAmount.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationAmount|";
-            }
-            if (this.BenefitCompensationType.Trim() != rhs.BenefitCompensationType.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationType|";
-            }
+        //        if (this.EffectiveDate.Trim() != rhs.EffectiveDate.Trim()) {
+        //            rhs.Changes = this.Changes = this.Changes + "|EffectiveDate|";
+        //        }
+        //    }
+        //    if (this.ElectionStatus.Trim() != rhs.ElectionStatus.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        rhs.Changes = this.Changes = this.Changes + "|ElectionStatus (" + this.ElectionStatus + " -> " + rhs.ElectionStatus + ")|"; ;
+        //    }
+        //    if (this.TotalRate.Trim() != rhs.TotalRate.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        rhs.Changes = this.Changes = this.Changes + "|TotalRate|";
+        //    }
+        //    if (this.EmployeeCostPerDeductionPeriod.Trim() != rhs.EmployeeCostPerDeductionPeriod.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        rhs.Changes = this.Changes = this.Changes + "|EmployeeCostPerDeductionPeriod|";
+        //    }
+        //    if (this.EmployerCostPerDeductionPeriod.Trim() != rhs.EmployerCostPerDeductionPeriod.Trim()) {
+        //        rhs.flagged = this.flagged = true;
+        //        rhs.Changes = this.Changes = this.Changes + "|EmployerCostPerDeductionPeriod|";
+        //    }
+        //    if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
+        //        if (!string.IsNullOrWhiteSpace(this.ESignDate) && !string.IsNullOrWhiteSpace(rhs.ESignDate)) {
+        //            this.ESignDate = DateTime.Parse(this.ESignDate).ToString("MM/dd/yyyy");
+        //            rhs.ESignDate = DateTime.Parse(rhs.ESignDate).ToString("MM/dd/yyyy");
+        //        }
+        //        if (this.ESignDate.Trim() != rhs.ESignDate.Trim()) {
+        //            rhs.Changes = this.Changes = this.Changes + "|ESignDate|";
+        //        }
+        //    }
+        //    if (this.BenefitCompensationAmount.Trim() != rhs.BenefitCompensationAmount.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationAmount|";
+        //    }
+        //    if (this.BenefitCompensationType.Trim() != rhs.BenefitCompensationType.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|BenefitCompensationType|";
+        //    }
 
+        //    if (this.MedicalPCPName.Trim() != rhs.MedicalPCPName.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|MedicalPCPName|";
+        //    }
+        //    if (this.MedicalPCPID.Trim() != rhs.MedicalPCPID.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|MedicalPCPID|";
+        //    }
+        //    if (this.DentalPCPName.Trim() != rhs.DentalPCPName.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|DentalPCPName|";
+        //    }
+        //    if (this.DentalPCPID.Trim() != rhs.DentalPCPID.Trim()) {
+        //        rhs.Changes = this.Changes = this.Changes + "|DentalPCPID|";
+        //    }
 
-            if (this.MedicalPCPName.Trim() != rhs.MedicalPCPName.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|MedicalPCPName|";
-            }
-            if (this.MedicalPCPID.Trim() != rhs.MedicalPCPID.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|MedicalPCPID|";
-            }
-            if (this.DentalPCPName.Trim() != rhs.DentalPCPName.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|DentalPCPName|";
-            }
-            if (this.DentalPCPID.Trim() != rhs.DentalPCPID.Trim()) {
-                rhs.Changes = this.Changes = this.Changes + "|DentalPCPID|";
-            }
+        //    rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
+        //    if (rhs.Changes.StartsWith("|")) {
+        //        rhs.Changes = rhs.Changes.Substring(1);
+        //    }
 
+        //    if (rhs.Changes.EndsWith("|")) {
+        //        rhs.Changes = rhs.Changes.Substring(0, rhs.Changes.Length - 1);
+        //    }
 
+        //    if (this.Changes.Trim().Length == 0) {
+        //        if (this.ToString() == rhs.ToString())
+        //            return true;
 
-            rhs.Changes = rhs.Changes.Replace("||", "|").Trim();
-            if (rhs.Changes.StartsWith("|")) {
-                rhs.Changes = rhs.Changes.Substring(1);
-            }
+        //        int stopNum = 0;
+        //        string message = string.Empty;
+        //        var leftStr = this.ToString().ToCharArray();
+        //        var rightStr = rhs.ToString().ToCharArray();
 
-            if (rhs.Changes.EndsWith("|")) {
-                rhs.Changes = rhs.Changes.Substring(0, rhs.Changes.Length - 1);
-            }
+        //        if (leftStr.Length >= rightStr.Length) {
+        //            for (int i = 0; i < rightStr.Length; i++) {
+        //                if (leftStr[i] != rightStr[i]) {
+        //                    stopNum = i;
+        //                    break;
+        //                }
+        //            }
 
-            if (this.Changes.Trim().Length == 0) {
-                if (this.ToString() == rhs.ToString())
-                    return true;
+        //            message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+        //            message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n";
+        //        } else {
+        //            for (int i = 0; i < leftStr.Length; i++) {
+        //                if (rightStr[i] != leftStr[i]) {
+        //                    stopNum = i;
+        //                    break;
+        //                }
+        //            }
 
-                int stopNum = 0;
-                string message = string.Empty;
-                var leftStr = this.ToString().ToCharArray();
-                var rightStr = rhs.ToString().ToCharArray();
+        //            message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n\n";
+        //            message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
+        //        }
+        //        this.Changes = message;
+        //        Console.WriteLine(message);
+        //        //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
+        //    }
+        //}
 
-                if (leftStr.Length >= rightStr.Length) {
-                    for (int i = 0; i < rightStr.Length; i++) {
-                        if (leftStr[i] != rightStr[i]) {
-                            stopNum = i;
-                            break;
-                        }
-                    }
-
-                    message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
-                    message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n";
-                } else {
-                    for (int i = 0; i < leftStr.Length; i++) {
-                        if (rightStr[i] != leftStr[i]) {
-                            stopNum = i;
-                            break;
-                        }
-                    }
-
-                    message += rhs.ToString().Substring(stopNum, rhs.ToString().Length - stopNum) + "\n\n";
-                    message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
-                }
-                this.Changes = message;
-                Console.WriteLine(message);
-                //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
-            }
-        }
-
-        return matched;
+        //return matched;
     }
 
     // override to print all frields in a CensusRow

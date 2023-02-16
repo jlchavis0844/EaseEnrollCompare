@@ -50,10 +50,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>F3A0F5F0E0CF0A5159C2B4041869E2823CD3A619</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>28DCFBC03998518F185294397D978ABEB3495FC9</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>EaseEnrollCompare_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>EaseEnrollCompare_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -119,6 +119,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="EaseEnrollCompare_1_TemporaryKey.pfx" />
     <None Include="EaseEnrollCompare_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
