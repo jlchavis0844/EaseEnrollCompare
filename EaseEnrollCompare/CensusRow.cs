@@ -119,6 +119,7 @@ public class CensusRow {
 
     public bool flagged { get; set; } //include in "ADD/DROP/Coverage" changes only
 
+
     public bool CompareNew(CensusRow rhs) {
         Type type = rhs.GetType();
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -140,19 +141,30 @@ public class CensusRow {
             if (property.Name == "Changes")
                 continue;//skip first prop (changes)
 
-            Console.WriteLine("Checking " + property.Name);
+            //Console.WriteLine("Checking " + property.Name);
             var val1 = property.GetValue(this);
             var val2 = property.GetValue(rhs);
-            if (!String.Equals(val1, val2)) {
-                Console.WriteLine(val1 + " doesn't match " + val2 + " for " + property.Name);
-                this.Changes = (rhs.Changes += property.Name + "|");
+
+            if(val1 == null && val2 == null) {
+                //do nothing
+            } else if (val1 == null || val2 == null) {
+                this.Changes = rhs.Changes = (rhs.Changes += "N-" + GetChangeTag(property.Name, rhs));
+            } else {
+                if (!String.Equals(val1.ToString(), val2.ToString(), StringComparison.OrdinalIgnoreCase)) {
+                    //Console.WriteLine(val1 + " doesn't match " + val2 + " for " + property.Name);
+
+                    //this.Changes = (rhs.Changes += property.Name + "|");
+                    this.Changes = rhs.Changes = (rhs.Changes += GetChangeTag(property.Name, rhs));
+                }
             }
             cnt--;
         }
 
         if (this.Changes.Trim().Length == 0) {
-            if (this.ToString() == rhs.ToString())
+            if (String.Equals(this.ToString(), rhs.ToString(), StringComparison.OrdinalIgnoreCase)) {
+                //if (this.ToString() == rhs.ToString())
                 return true;
+            }
 
             int stopNum = 0;
             string message = string.Empty;
@@ -181,16 +193,65 @@ public class CensusRow {
                 message += this.ToString().Substring(stopNum, this.ToString().Length - stopNum) + "\n";
             }
             this.Changes = message;
-            Console.WriteLine(message);
+            //Console.WriteLine(message);
             //MessageBox.Show("Unknown change at Location " + stopNum + "\n\n" + message);
         } else {
             this.Changes = rhs.Changes = rhs.Changes.Trim().Remove(rhs.Changes.Length - 1);
         }
 
-
-        if (cnt != 0)
-            Console.WriteLine("missing props: " + cnt);
+        //if (cnt != 0)
+        //    Console.WriteLine("missing props: " + cnt);
         return false;
+    }
+
+    private string GetChangeTag(string changeName, CensusRow rhs) {
+        string retString = String.Empty;
+
+        switch (changeName) {
+            case "LastName":
+                retString = "Last Name (" + this.LastName + " -> " + rhs.LastName + ")|";
+                break;
+
+            case "PlanDisplayName":
+                retString = "PlanDisplayName (" + this.PlanDisplayName + " -> " + rhs.PlanDisplayName + ")|";
+                flagged = true;
+                break;
+
+            case "CoverageDetails":
+                retString = "CoverageDetails (" + this.CoverageDetails + " -> " + rhs.CoverageDetails + ")|";
+                flagged = true;
+                break;
+
+            case "ElectionStatus":
+                retString = "ElectionStatus (" + this.ElectionStatus + " -> " + rhs.ElectionStatus + ")|";
+                flagged = true;
+                break;
+
+            case "EffectiveDate":
+                retString = "EffectiveDate|";
+                flagged = true;
+                break;
+
+            case "TotalRate":
+                retString = "TotalRate|";
+                flagged = true;
+                break;
+
+            case "EmployeeCostPerDeductionPeriod":
+                retString = "EmployeeCostPerDeductionPeriod|";
+                flagged = true;
+                break;
+
+            case "EmployerCostPerDeductionPeriod":
+                retString = "EmployerCostPerDeductionPeriod|";
+                flagged = true;
+                break;
+
+            default:
+                retString = changeName + "|";
+                break;
+        }
+        return retString;
     }
 
     //public string HSAYTDasof4/ 30 { get; set; }

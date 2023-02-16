@@ -67,11 +67,11 @@ namespace EaseEnrollCompare {
                                 //OldRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
-                                Console.WriteLine(cnt + " lines removed");
+                                //Console.WriteLine(cnt + " lines removed");
                                 btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
 
                             } catch (Exception ex) {
-                                Console.WriteLine(ex);
+                                //Console.WriteLine(ex);
                                 ErrorMessage(ex);
                             }
                         }
@@ -93,11 +93,11 @@ namespace EaseEnrollCompare {
                                 OldRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = OldRecords.RemoveAll(ShouldBeRemovedOld);
-                                Console.WriteLine(cnt + " lines removed");
+                                //Console.WriteLine(cnt + " lines removed");
                                 btnLoadOld.Text = "Loaded " + OldRecords.Count + " Records";
 
                             } catch (Exception ex) {
-                                Console.WriteLine(ex);
+                                //Console.WriteLine(ex);
                                 ErrorMessage(ex);
                             }
                         }
@@ -139,11 +139,11 @@ namespace EaseEnrollCompare {
                                 //NewRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
-                                Console.WriteLine(cnt + " lines removed");
+                                //Console.WriteLine(cnt + " lines removed");
                                 btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
 
                             } catch (Exception ex) {
-                                Console.WriteLine(ex);
+                                //Console.WriteLine(ex);
                                 ErrorMessage(ex);
                             }
                         }
@@ -166,11 +166,11 @@ namespace EaseEnrollCompare {
                                 NewRecords = csv.GetRecords<CensusRow>().ToList();
 
                                 int cnt = NewRecords.RemoveAll(ShouldBeRemovedNew);
-                                Console.WriteLine(cnt + " lines removed");
+                                //Console.WriteLine(cnt + " lines removed");
                                 btnLoadNew.Text = "Loaded " + NewRecords.Count + " Records";
 
                             } catch (Exception ex) {
-                                Console.WriteLine(ex);
+                                //Console.WriteLine(ex);
                                 ErrorMessage(ex);
                             }
                         }
@@ -355,9 +355,9 @@ namespace EaseEnrollCompare {
             dgvOutPut.DataSource = output.OrderByDescending(o => o.PlanType)./*ThenBy(o => o.Changes).*/ThenBy(o => o.EID).
                 ThenBy(o => o.RelationshipCode).ThenBy(o => o.FirstName).ToList();
 
-            foreach (var col in dgvOutPut.Columns) {
-                Console.WriteLine(col.ToString());
-            }
+            //foreach (var col in dgvOutPut.Columns) {
+            //    Console.WriteLine(col.ToString());
+            //}
 
             RemoveColumns();
         }
@@ -713,7 +713,7 @@ namespace EaseEnrollCompare {
                                 x.PlanType == rec.PlanType).FirstOrDefault();
 
                         if(tempRec == null) {
-                            Console.WriteLine(tMsg);
+                            //Console.WriteLine(tMsg);
                             continue;
                         } else {
                             tempRec.Changes = "DROP-OLD_DATA";
@@ -722,12 +722,12 @@ namespace EaseEnrollCompare {
                             tempRec.EffectiveDate = string.Empty;
                             newDrops.Add(tempRec);
                             MissingTerms.Add(tempRec);
-                            Console.WriteLine(tMsg + '\n' + "USED OLD DATA");
+                            //Console.WriteLine(tMsg + '\n' + "USED OLD DATA");
                            
                             continue;
                         }
                     } else {
-                        Console.WriteLine(tMsg);
+                        //Console.WriteLine(tMsg);
                         continue;
                     }
                     //}
@@ -819,9 +819,9 @@ namespace EaseEnrollCompare {
                 dt.Columns[i].ColumnName = "Column" + i;
             }
 
-            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
-                Console.WriteLine(dt.Rows[1].ItemArray[i]);
-            }
+            //for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
+            //    Console.WriteLine(dt.Rows[1].ItemArray[i]);
+            //}
 
             dt.Columns[0].ColumnName = "Changes";
             dt.Columns[1].ColumnName = "Company Name";
@@ -935,28 +935,24 @@ namespace EaseEnrollCompare {
             //dt.Columns[108].ColumnName = "CalPERS ID";
             //dt.Columns[109].ColumnName = "Enrolled By";
             //dt.Columns[110].ColumnName = "New Business";
+            
+            //for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
+            //    Console.WriteLine(dt.Columns[i].ColumnName + "\t" + dt.Rows[0].ItemArray[i]);
+            //}
 
-
-
-
-
-            for (int i = 0; i < dt.Rows[1].ItemArray.Length; i++) {
-                Console.WriteLine(dt.Columns[i].ColumnName + "\t" + dt.Rows[0].ItemArray[i]);
-            }
-
-            Console.WriteLine("End Rename");
+            //Console.WriteLine("End Rename");
         }
 
         private void cbAutoChanges_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.OpenChangesFile = cbAutoChanges.Checked;
             Properties.Settings.Default.Save();
-            Console.WriteLine("Changed cbAutoChanges to " + Properties.Settings.Default.OpenChangesFile);
+            //Console.WriteLine("Changed cbAutoChanges to " + Properties.Settings.Default.OpenChangesFile);
         }
 
         private void cbOpenEDIData_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.OpenDataOut = cbOpenEDIData.Checked;
             Properties.Settings.Default.Save();
-            Console.WriteLine("Changed cbOpenEDIData to " + Properties.Settings.Default.OpenChangesFile);
+            //Console.WriteLine("Changed cbOpenEDIData to " + Properties.Settings.Default.OpenChangesFile);
         }
 
         private void btnCopy_Click(object sender, EventArgs e) {
